@@ -1,0 +1,2257 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI & Data Compliance Assessment — bg.legal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  /* SAVE / RESUME */
+  .resume-panel {
+    display:none;
+    margin:32px auto 0;
+    max-width:560px;
+    background:var(--white);
+    border:1.5px solid rgba(133,133,204,0.28);
+    border-radius:10px;
+    padding:22px 24px;
+    text-align:left;
+    box-shadow:0 10px 28px rgba(13,13,13,0.06);
+  }
+  .resume-panel.visible { display:block; }
+  .resume-title {
+    font-weight:700;
+    font-size:0.95rem;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .resume-sub {
+    font-size:0.82rem;
+    color:var(--muted);
+    line-height:1.55;
+    font-weight:300;
+    margin-bottom:16px;
+  }
+  .resume-actions {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn-secondary {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:var(--accent-light);
+    color:var(--accent-dark);
+    font-family:'DM Sans',sans-serif;
+    font-size:0.88rem;
+    font-weight:600;
+    padding:12px 18px;
+    border:1px solid rgba(133,133,204,0.28);
+    border-radius:4px;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .btn-secondary:hover {
+    background:var(--accent);
+    color:var(--ink);
+    transform:translateY(-1px);
+  }
+  .btn-tertiary {
+    background:none;
+    color:var(--muted);
+    font-family:'DM Sans',sans-serif;
+    font-size:0.84rem;
+    font-weight:500;
+    padding:12px 10px;
+    border:none;
+    cursor:pointer;
+  }
+  .btn-tertiary:hover { color:var(--red); }
+
+  .save-status {
+    font-size:0.76rem;
+    color:var(--muted);
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .save-status-dot {
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--green);
+    display:inline-block;
+  }
+<style>
+  :root {
+    --ink: #2F302F; --paper: #DEDAC6; --cream: #ede8dc;
+    --accent: #B9B9EB; --accent-dark: #8585cc; --accent-light: #f0eff9;
+    --muted: #7a7468; --white: #fdfaf5;
+    --green: #2d7a5f; --green-light: #e4f0eb;
+    --red: #c8401e; --red-light: #f5e8e4;
+    --amber: #c9841e; --amber-light: #f5ede0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family:'DM Sans',sans-serif; background:var(--paper); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:9999; opacity:0.4; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:28px 48px; border-bottom:1px solid rgba(13,13,13,0.12); position:sticky; top:0; background:var(--paper); z-index:100; }
+  .logo { font-family:'DM Serif Display',serif; font-size:1.25rem; letter-spacing:-0.01em; color:var(--ink); display:flex; align-items:center; gap:10px; }
+  .logo-dot { width:8px; height:8px; background:var(--accent-dark); border-radius:50%; display:inline-block; }
+  .badge { font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); border:1px solid rgba(13,13,13,0.18); padding:6px 14px; border-radius:100px; }
+  .screen { display:none; animation:fadeUp 0.45s ease; }
+  .screen.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* INTRO */
+  #screen-intro { max-width:820px; margin:0 auto; padding:80px 48px 60px; text-align:center; }
+  .eyebrow { font-size:0.72rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-dark); margin-bottom:22px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .eyebrow::before,.eyebrow::after { content:''; display:block; width:40px; height:1px; background:var(--accent-dark); opacity:0.5; }
+  h1 { font-family:'DM Serif Display',serif; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.1; letter-spacing:-0.02em; color:var(--ink); margin-bottom:24px; }
+  h1 em { font-style:italic; color:var(--accent-dark); }
+  .hero-sub { font-size:1.05rem; line-height:1.7; color:var(--muted); font-weight:300; max-width:600px; margin:0 auto 48px; }
+  .meta-row { display:flex; justify-content:center; gap:32px; margin-bottom:48px; flex-wrap:wrap; }
+  .meta-item { display:flex; align-items:center; gap:8px; font-size:0.88rem; color:var(--muted); }
+  .btn-primary { display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--white); font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; padding:18px 40px; border:none; border-radius:4px; cursor:pointer; transition:all 0.25s ease; }
+  .btn-primary:hover { background:var(--accent-dark); transform:translateY(-2px); box-shadow:0 12px 30px rgba(133,133,204,0.35); }
+  .btn-primary .arrow { transition:transform 0.25s ease; }
+  .btn-primary:hover .arrow { transform:translateX(4px); }
+  .coverage-row { margin-top:64px; padding-top:40px; border-top:1px solid rgba(13,13,13,0.1); }
+  .coverage-label { font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; }
+  .tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .tag { background:var(--cream); border:1px solid rgba(13,13,13,0.1); font-size:0.78rem; font-weight:500; padding:5px 12px; border-radius:3px; color:var(--ink); }
+
+  /* QUESTION */
+  #screen-question { max-width:900px; margin:0 auto; padding:52px 48px 80px; }
+  .progress-wrap { display:flex; align-items:center; gap:16px; margin-bottom:12px; }
+  .progress-bar-track { flex:1; height:3px; background:rgba(13,13,13,0.12); border-radius:2px; overflow:hidden; }
+  .progress-bar-fill { height:100%; background:var(--accent-dark); transition:width 0.5s cubic-bezier(0.4,0,0.2,1); border-radius:2px; }
+  .progress-label { font-size:0.78rem; font-weight:600; color:var(--muted); white-space:nowrap; }
+  .step-breadcrumb { font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-dark); margin-bottom:8px; margin-top:28px; }
+  .question-text { font-family:'DM Serif Display',serif; font-size:clamp(1.3rem,2.5vw,1.85rem); line-height:1.3; letter-spacing:-0.02em; color:var(--ink); margin-bottom:10px; }
+  .question-hint { font-size:0.875rem; color:var(--muted); font-weight:300; line-height:1.6; background:var(--cream); border-left:3px solid var(--accent-dark); padding:10px 14px; border-radius:0 4px 4px 0; margin-bottom:28px; display:none; }
+  .options-list { display:flex; flex-direction:column; gap:10px; margin-bottom:36px; }
+  .option-btn { background:var(--white); border:1.5px solid rgba(13,13,13,0.12); border-radius:6px; padding:14px 18px; text-align:left; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:flex-start; gap:14px; font-family:'DM Sans',sans-serif; width:100%; }
+  .option-btn:hover { border-color:var(--accent-dark); background:var(--accent-light); transform:translateY(-1px); box-shadow:0 6px 18px rgba(13,13,13,0.07); }
+  .option-btn.selected { border-color:var(--accent-dark); background:var(--accent-light); box-shadow:0 0 0 3px rgba(133,133,204,0.15); }
+  .option-indicator { width:20px; height:20px; min-width:20px; border:1.5px solid rgba(13,13,13,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:2px; transition:all 0.2s ease; flex-shrink:0; }
+  .option-btn.selected .option-indicator { border-color:var(--accent-dark); background:var(--accent-dark); }
+  .option-btn.selected .option-indicator::after { content:''; width:7px; height:7px; background:white; border-radius:50%; display:block; }
+  .option-text { font-size:0.9rem; font-weight:500; color:var(--ink); line-height:1.4; }
+  .option-sub { font-size:0.8rem; color:var(--muted); font-weight:300; margin-top:3px; line-height:1.4; }
+  .option-btn.checkbox .option-indicator { border-radius:4px; }
+  .option-btn.checkbox.selected .option-indicator::after { content:'✓'; font-size:0.75rem; border-radius:0; background:transparent; color:white; width:auto; height:auto; font-weight:700; }
+  .free-text-wrap { margin-bottom:36px; }
+  .free-text-input { font-family:'DM Sans',sans-serif; font-size:0.95rem; color:var(--ink); background:var(--white); border:1.5px solid rgba(13,13,13,0.18); border-radius:6px; padding:14px 18px; width:100%; outline:none; transition:border-color 0.2s; resize:vertical; min-height:90px; }
+  .free-text-input:focus { border-color:var(--accent-dark); }
+  .nav-row { display:flex; justify-content:space-between; align-items:center; }
+  .btn-back { background:none; border:none; font-family:'DM Sans',sans-serif; font-size:0.9rem; color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:6px; padding:8px 0; transition:color 0.2s; }
+  .btn-back:hover { color:var(--ink); }
+  .btn-next { background:var(--ink); color:var(--white); font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:500; padding:14px 32px; border:none; border-radius:4px; cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s ease; opacity:0.35; pointer-events:none; }
+  .btn-next.enabled { opacity:1; pointer-events:all; }
+  .btn-next.enabled:hover { background:var(--accent-dark); transform:translateY(-1px); }
+
+  /* EMAIL GATE */
+  #screen-email { max-width:560px; margin:0 auto; padding:100px 48px 80px; text-align:center; }
+  .email-icon { width:64px; height:64px; background:var(--accent-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 32px; font-size:1.6rem; }
+  .email-gate-title { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,4vw,2.6rem); letter-spacing:-0.02em; line-height:1.15; margin-bottom:16px; }
+  .email-gate-title em { font-style:italic; color:var(--accent-dark); }
+  .email-gate-sub { font-size:0.95rem; color:var(--muted); font-weight:300; line-height:1.7; margin-bottom:40px; max-width:420px; margin-left:auto; margin-right:auto; }
+  .email-field-wrap { display:flex; flex-direction:column; gap:12px; margin-bottom:14px; }
+  .email-input,.name-input,.org-input { font-family:'DM Sans',sans-serif; font-size:1rem; color:var(--ink); background:var(--white); border:1.5px solid rgba(13,13,13,0.18); border-radius:6px; padding:16px 20px; width:100%; outline:none; transition:border-color 0.2s; }
+  .email-input:focus,.name-input:focus,.org-input:focus { border-color:var(--accent-dark); }
+  .email-input.error { border-color:var(--red); }
+  .email-error { font-size:0.8rem; color:var(--red); display:none; text-align:left; margin-top:-4px; }
+  .email-error.visible { display:block; }
+  .btn-email-submit { width:100%; background:var(--ink); color:var(--white); font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500; padding:18px 32px; border:none; border-radius:6px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .btn-email-submit:hover { background:var(--accent-dark); transform:translateY(-2px); box-shadow:0 12px 30px rgba(133,133,204,0.35); }
+  .btn-email-submit:disabled { opacity:0.6; cursor:not-allowed; transform:none; box-shadow:none; }
+  .email-privacy { font-size:0.75rem; color:var(--muted); margin-top:16px; line-height:1.6; font-weight:300; }
+
+  /* RESULTS */
+  #screen-results { max-width:1040px; margin:0 auto; padding:60px 48px 80px; }
+  .results-header { margin-bottom:40px; border-bottom:1px solid rgba(13,13,13,0.1); padding-bottom:28px; }
+  .results-title { font-family:'DM Serif Display',serif; font-size:clamp(1.8rem,3.5vw,2.8rem); letter-spacing:-0.02em; line-height:1.15; }
+  .results-title em { font-style:italic; color:var(--accent-dark); }
+  .section-title { font-size:0.72rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; margin-top:44px; }
+  .risk-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .risk-card { background:var(--white); border:1.5px solid rgba(13,13,13,0.1); border-radius:8px; padding:20px 22px; }
+  .risk-card-icon { font-size:1.4rem; margin-bottom:8px; }
+  .risk-card-label { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .risk-card-count { font-family:'DM Serif Display',serif; font-size:2.2rem; color:var(--ink); margin-bottom:4px; }
+  .risk-card-desc { font-size:0.8rem; color:var(--muted); font-weight:300; line-height:1.5; }
+  .module-table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+  .module-table th { text-align:left; font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px; border-bottom:2px solid rgba(13,13,13,0.12); background:var(--cream); }
+  .module-table td { padding:10px 14px; border-bottom:1px solid rgba(13,13,13,0.07); vertical-align:top; line-height:1.5; }
+  .module-table tr:hover td { background:rgba(13,13,13,0.02); }
+  .rel-yes { color:var(--green); font-weight:600; }
+  .rel-no  { color:var(--muted); }
+  .rel-always { color:var(--accent-dark); font-weight:600; }
+  .fase-pill { display:inline-block; font-size:0.67rem; font-weight:600; padding:2px 7px; border-radius:3px; background:var(--accent-light); color:var(--accent-dark); margin:2px 2px 0 0; letter-spacing:0.03em; }
+  .priority-list { margin-bottom:0; }
+  .priority-card { background:var(--white); border:1.5px solid rgba(13,13,13,0.1); border-radius:8px; padding:20px 22px; margin-bottom:10px; display:flex; align-items:flex-start; gap:16px; }
+  .priority-card.blocker { border-color:var(--red); background:var(--red-light); }
+  .priority-card.warning { border-color:var(--amber); background:var(--amber-light); }
+  .priority-card.monitor { border-color:var(--green); background:var(--green-light); }
+  .priority-icon { width:38px; height:38px; min-width:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+  .priority-body { flex:1; }
+  .priority-name { font-weight:600; font-size:0.95rem; color:var(--ink); margin-bottom:5px; }
+  .priority-desc { font-size:0.84rem; color:var(--muted); line-height:1.6; font-weight:300; }
+  .priority-meta { font-size:0.75rem; color:var(--muted); margin-top:7px; font-style:italic; }
+  .priority-level { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-top:6px; display:inline-block; padding:2px 8px; border-radius:3px; }
+  .priority-level.blocker { color:var(--red); background:rgba(200,64,30,0.1); }
+  .priority-level.warning { color:var(--amber); background:rgba(201,132,30,0.1); }
+  .priority-level.monitor { color:var(--green); background:rgba(45,122,95,0.1); }
+  .answers-table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+  .answers-table th { text-align:left; font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:10px 14px; border-bottom:2px solid rgba(13,13,13,0.12); background:var(--cream); }
+  .answers-table td { padding:10px 14px; border-bottom:1px solid rgba(13,13,13,0.07); vertical-align:top; line-height:1.5; }
+  .step-group-header td { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-dark); background:var(--accent-light) !important; padding:7px 14px; border-bottom:1px solid rgba(133,133,204,0.2); }
+  .badge-skipped { display:inline-block; font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:3px; background:var(--cream); color:var(--muted); }
+  .cta-block { background:var(--ink); border-radius:10px; padding:36px 40px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:24px; margin-top:48px; }
+  .cta-text h3 { font-family:'DM Serif Display',serif; font-size:1.4rem; color:var(--white); margin-bottom:6px; }
+  .cta-text p { font-size:0.88rem; color:rgba(255,255,255,0.55); font-weight:300; }
+  .btn-cta { background:var(--accent-dark); color:white; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:600; padding:14px 28px; border:none; border-radius:4px; cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+  .btn-cta:hover { opacity:0.88; transform:translateY(-1px); }
+  .btn-restart { background:none; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); font-family:'DM Sans',sans-serif; font-size:0.85rem; padding:14px 24px; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+  .btn-restart:hover { border-color:rgba(255,255,255,0.5); color:white; }
+  .disclaimer { font-size:0.75rem; color:var(--muted); margin-top:28px; line-height:1.6; font-weight:300; padding-top:20px; border-top:1px solid rgba(13,13,13,0.1); }
+  .empty-list { background:var(--cream); border-radius:6px; padding:14px 18px; font-size:0.85rem; color:var(--muted); }
+  @media (max-width:640px) {
+    header { padding:20px 24px; }
+    #screen-intro,#screen-question,#screen-results,#screen-email { padding:36px 24px 60px; }
+    .results-header { flex-direction:column; align-items:flex-start; }
+    .risk-cards { grid-template-columns:1fr 1fr; }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="logo-dot"></span>Compliance Assessment</div>
+  <div class="badge">bg.legal · 11 Modules</div>
+</header>
+
+<!-- INTRO -->
+<div id="screen-intro" class="screen active">
+  <div class="eyebrow">Compliance Assessment</div>
+  <h1>Uw volledige <em>compliance</em><br>assessment in één tool</h1>
+  <p class="hero-sub">Een uitgebreide, stapsgewijze analyse van alle Europese AI- en dataregelgeving die op uw project van toepassing is. Krijg direct zicht op de aandachtspunten binnen uw project.</p>
+  <div class="meta-row">
+    <div class="meta-item"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>~30–45 minuten</div>
+    <div class="meta-item"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/></svg>11 modules (0–10)</div>
+    <div class="meta-item"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Vertrouwelijk</div>
+  </div>
+  <button class="btn-primary" onclick="startScan()">Start nieuw assessment <span class="arrow">→</span></button>
+
+<div id="resume-panel" class="resume-panel">
+  <div class="resume-title">Eerder assessment gevonden</div>
+  <div class="resume-sub" id="resume-sub">
+    Er is een opgeslagen assessment beschikbaar in deze browser.
+  </div>
+  <div class="resume-actions">
+    <button class="btn-secondary" onclick="resumeAssessment()">Hervat assessment →</button>
+    <button class="btn-tertiary" onclick="deleteSavedProgress()">Opgeslagen voortgang verwijderen</button>
+  </div>
+</div>
+  <div class="coverage-row">
+    <div class="coverage-label">Gedekte regelgeving</div>
+    <div class="tags">
+      <span class="tag">EU AI Act</span><span class="tag">GDPR</span>
+      <span class="tag">Data Act</span><span class="tag">Data Governance Act</span><span class="tag">MDR/IVDR</span>
+      <span class="tag">NIS2</span><span class="tag">Cyber Resilience Act</span><span class="tag">Accessibility Act</span><span class="tag">IP Rights</span><span class="tag"> Contracting</span>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div id="screen-question" class="screen">
+  <div class="progress-wrap">
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">1 / ?</div>
+  </div>
+  <div class="step-breadcrumb" id="q-step"></div>
+  <div class="question-text" id="q-text"></div>
+  <div class="question-hint" id="q-hint"></div>
+  <div id="options-wrap"><div class="options-list" id="options-list"></div></div>
+  <div id="free-text-wrap" class="free-text-wrap" style="display:none">
+    <textarea class="free-text-input" id="free-text-input" placeholder="Typ uw antwoord hier..."></textarea>
+  </div>
+  <div class="nav-row">
+    <button class="btn-back" id="btn-back" onclick="prevQuestion()">← Vorige</button>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Volgende →</button>
+  </div>
+</div>
+
+<!-- EMAIL GATE -->
+<div id="screen-email" class="screen">
+  <div class="email-icon">📋</div>
+  <div class="email-gate-title">Uw rapport is <em>gereed</em></div>
+  <p class="email-gate-sub">Vul uw gegevens in om uw persoonlijk compliance-rapport te ontvangen en te bekijken.</p>
+  <div class="email-field-wrap">
+    <input type="text" id="user-name" class="name-input" placeholder="Uw naam"/>
+    <input type="text" id="user-org" class="org-input" placeholder="Organisatie / bedrijfsnaam"/>
+    <input type="email" id="user-email" class="email-input" placeholder="uw@emailadres.nl" oninput="clearEmailError()"/>
+    <div class="email-error" id="email-error">Voer een geldig e-mailadres in.</div>
+    <button class="btn-email-submit" id="btn-submit-email" onclick="submitEmail()">Bekijk mijn compliance-rapport →</button>
+  </div>
+  <p class="email-privacy">🔒 Uw resultaten worden naar uw e-mailadres verzonden. Wij respecteren uw privacy en delen uw gegevens niet met derden.</p>
+</div>
+
+<!-- RESULTS -->
+<div id="screen-results" class="screen">
+  <div class="results-header">
+    <div class="results-title">AI &amp; Data Compliance<br><em>Assessment Rapport</em></div>
+    <div style="margin-top:10px;font-size:0.88rem;color:var(--muted);font-weight:300" id="results-user-info"></div>
+  </div>
+
+  <p class="section-title">Overall risicosignalering</p>
+  <div class="risk-cards" id="risk-cards"></div>
+
+  <p class="section-title">Overzicht per module — AI Assessment Cycle</p>
+  <table class="module-table">
+    <thead><tr><th>Module</th><th>Regelgeving</th><th>Relevant?</th><th>AI Assessment Fase(n)</th><th>Bevindingen</th><th>Prioriteit</th></tr></thead>
+    <tbody id="module-tbody"></tbody>
+  </table>
+
+  <p class="section-title">🔴 Directe actie vereist — showstoppers</p>
+  <div class="priority-list" id="list-blocker"></div>
+
+  <p class="section-title">🟡 Actie vereist voor verdere ontwikkeling</p>
+  <div class="priority-list" id="list-warning"></div>
+
+  <p class="section-title">🟢 Monitor en documenteer</p>
+  <div class="priority-list" id="list-monitor"></div>
+
+  <p class="section-title">Uw antwoorden per module</p>
+  <table class="answers-table">
+    <thead><tr><th>Vraag</th><th>Uw antwoord</th></tr></thead>
+    <tbody id="answers-body"></tbody>
+  </table>
+
+  <div style="background:var(--white);border:1.5px solid rgba(133,133,204,0.35);border-radius:8px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:32px;margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;background:var(--accent-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">📄</div>
+      <div>
+        <div style="font-weight:600;font-size:0.95rem;color:var(--ink)">Download uw rapport als PDF</div>
+        <div style="font-size:0.8rem;color:var(--muted);font-weight:300;margin-top:2px">Sla uw compliance-rapport lokaal op als PDF-bestand</div>
+      </div>
+    </div>
+    <button id="btn-download-pdf" onclick="downloadPDF()" style="background:var(--ink);color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;padding:12px 24px;border:none;border-radius:4px;cursor:pointer;transition:all 0.2s;white-space:nowrap" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--ink)'">↓ Download PDF</button>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-text">
+      <h3>Klaar om actie te ondernemen?</h3>
+      <p>Boek een gratis 30 minuten gesprek met een AI-compliance specialist en zet de uitkomsten om in een concreet actieplan.</p>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn-cta" onclick="window.open('mailto:info@bg.legal?subject=Afspraak AI Compliance Assessment','_blank')">Neem contact op →</button>
+      <button class="btn-restart" onclick="restart()">Opnieuw beginnen</button>
+    </div>
+  </div>
+  <p class="disclaimer">⚠️ Dit assessment biedt een compliance-overzicht op basis van uw antwoorden en vormt geen juridisch advies. Regelgevingsverplichtingen hangen af van uw specifieke context, jurisdictie en systeemontwerp. Raadpleeg voor specifiek juridisch advies een gekwalificeerde jurist gespecialiseerd in EU digitale regelgeving. bg.legal | info@bg.legal</p>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// MODULE LABELS
+// ═══════════════════════════════════════════════════════════════
+const MODULES = {
+  m0:'Module 0 — Algemeen Projectprofiel',
+  m1:'Module 1 — EU AI Act',
+  m2:'Module 2 — AVG (GDPR)',
+  m3:'Module 3 — Data Act',
+  m4:'Module 4 — Data Governance Act (DGA)',
+  m5:'Module 5 — MDR / IVDR',
+  m6:'Module 6 — NIS2-richtlijn',
+  m7:'Module 7 — Cyber Resilience Act (CRA)',
+  m8:'Module 8 — European Accessibility Act (EAA)',
+  m9:'Module 9 — Intellectuele Eigendomsrechten (IE)',
+  m10:'Module 10 — Contractuele Verplichtingen AI & Data'
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ACTIVATION LOGIC (defined before questions)
+// ═══════════════════════════════════════════════════════════════
+
+const get = () => answers;
+
+// Module 1: AI Act
+function m1Active(a) {
+  return a.v0_3==='ai_core'||a.v0_3==='ai_part'||a.v0_2==='automated'||a.v0_2==='predictive';
+}
+// Module 2: AVG
+function m2Active(a) {
+  return a.v0_5==='yes_id'||a.v0_5==='yes_pseudo'||a.v0_5==='unknown';
+}
+// Module 3: Data Act
+function m3Active(a) {
+  const arr=Array.isArray(a.v0_7)?a.v0_7:[a.v0_7];
+  return arr.includes('industry')||a.v0_4==='external'||a.v0_9a==='yes'||a.v0_2==='external_product';
+}
+// Module 4: DGA
+function m4Active(a) {
+  const arr=Array.isArray(a.v0_7)?a.v0_7:[a.v0_7];
+  return arr.includes('government')||a.v0_9a==='yes'||a.v0_9b==='yes'||a.v0_4==='government';
+}
+// Module 5: MDR
+function m5Active(a) {
+  const arr=Array.isArray(a.v0_7)?a.v0_7:[a.v0_7];
+  return arr.includes('health')||a.v0_4==='patients'||a.v0_2==='medical';
+}
+// Module 6: NIS2
+function m6Active(a) {
+  const arr=Array.isArray(a.v0_7)?a.v0_7:[a.v0_7];
+  return arr.some(s=>['health','finance','government','energy'].includes(s))||
+    a.v0_10==='50_249'||a.v0_10==='250plus';
+}
+// Module 7: CRA
+function m7Active(a) {
+  return a.v0_2==='external_product'||a.v0_12==='developer'||a.v0_12==='both'||a.v0_4==='external';
+}
+// Module 8: EAA
+function m8Active(a) {
+  return a.v0_4==='external'||a.v0_2==='external_product';
+}
+// Module 9: IE (always)
+// Module 10: Contracts (always)
+
+// AI Act helper functions
+function isAISystem(a) {
+  if(a.v1_1==='rules') return false;
+  if(a.v1_2==='no') return false;
+  if(a.v1_3==='internal') return false;
+  return true;
+}
+function hasForbiddenPractice(a) {
+  return ['v1_10','v1_11','v1_12','v1_13','v1_14','v1_15','v1_16'].some(k=>a[k]==='yes');
+}
+function isHighRiskProduct(a) {
+  const v=Array.isArray(a.v1_17)?a.v1_17:[a.v1_17];
+  return v.some(x=>['mdr','machinery','vehicle'].includes(x));
+}
+function isBijlageIIIPositive(a) {
+  return ['v1_18','v1_19','v1_20','v1_21','v1_22','v1_23','v1_24','v1_25'].some(k=>a[k]&&a[k]!=='no');
+}
+function isHighRiskBijlage(a) { return isBijlageIIIPositive(a)&&a.v1_26!=='yes'; }
+function isHighRisk(a) { return isHighRiskProduct(a)||isHighRiskBijlage(a); }
+function isProvider(a) { return a.v1_30==='provider_int'||a.v1_30==='provider_ext'; }
+function isProviderOrModifier(a) { return isProvider(a)||a.v1_33==='yes'; }
+function isDeployer(a) { return a.v1_31==='yes'&&!isProvider(a); }
+function usesGPAI(a) { return a.v1_46==='api'||a.v1_46==='finetuned'; }
+function isGPAIProvider(a) { return usesGPAI(a)&&a.v1_47==='yes'; }
+
+// ═══════════════════════════════════════════════════════════════
+// QUESTIONS
+// ═══════════════════════════════════════════════════════════════
+const questions = [
+
+// ── MODULE 0 ─────────────────────────────────────────────────
+{id:'v0_1',step:'m0',text:'Geef een korte omschrijving van het project in eigen woorden.',hint:'Dit veld wordt gebruikt als contextinput voor de rapportage (max. 500 tekens).',type:'free'},
+{id:'v0_2',step:'m0',text:'Wat is het beoogde eindresultaat van dit project?',hint:'Uw antwoord bepaalt mede welke modules worden geactiveerd.',type:'single',options:[
+  {label:'Intern dashboard of rapportage (alleen intern gebruik)',value:'internal'},
+  {label:'Geautomatiseerd beslissingsproces',sub:'bijv. automatische goedkeuring, afwijzing, selectie',value:'automated'},
+  {label:'Advies of aanbeveling aan een medewerker die dan zelf beslist',value:'advice'},
+  {label:'Voorspellend model',sub:'bijv. kans op uitval, fraude, ziekte, etc.',value:'predictive'},
+  {label:'Product of dienst die extern wordt aangeboden aan klanten of derden',value:'external_product'},
+  {label:'Medische diagnose of behandeladvies',value:'medical'},
+  {label:'Anders',value:'other'}
+]},
+{id:'v0_3',step:'m0',text:'Maakt het project gebruik van AI-technologie?',hint:'Bijv. machine learning, een taalmodel, beeldherkenning, patroonherkenning.',type:'single',options:[
+  {label:'Ja, AI vormt de kern van het systeem',value:'ai_core'},
+  {label:'Ja, AI is een onderdeel naast andere methoden',value:'ai_part'},
+  {label:'Nee, het gaat om klassieke statistiek of regelgebaseerde systemen',value:'no_ai'},
+  {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v0_4',step:'m0',text:'Voor wie wordt het systeem primair ontwikkeld of ingezet?',hint:'',type:'single',options:[
+  {label:'Interne medewerkers van onze eigen organisatie',value:'internal'},
+  {label:'Externe klanten of gebruikers (consumenten of bedrijven)',value:'external'},
+  {label:'Publieke instanties of overheidsorganen',value:'government'},
+  {label:'Patiënten of zorgontvangers',value:'patients'},
+  {label:'Anders',value:'other'}
+]},
+{id:'v0_5',step:'m0',text:'Worden er persoonsgegevens verwerkt in dit project?',hint:'Denk aan: namen, e-mailadressen, IP-adressen, klantgedrag, gezondheidsgegevens, locatiedata, etc.',type:'single',options:[
+  {label:'Ja, we verwerken persoonsgegevens van identificeerbare personen',value:'yes_id'},
+  {label:'Ja, maar we anonimiseren of pseudonimiseren alle data vóór gebruik',value:'yes_pseudo'},
+  {label:'Nee, we werken uitsluitend met geaggregeerde of niet-persoonsgebonden data',value:'no'},
+  {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v0_6',step:'m0',text:'Bevat de data bijzondere of gevoelige categorieën persoonsgegevens?',hint:'Denk aan: gezondheid, ras/etniciteit, religie, politieke opvattingen, biometrische gegevens, strafrechtelijke gegevens.',type:'single',
+  skipIf:(a)=>a.v0_5!=='yes_id',
+  options:[
+    {label:'Ja',value:'yes'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v0_7',step:'m0',text:'In welke sector(en) opereert uw organisatie of klant?',hint:'Meerdere antwoorden mogelijk.',type:'multi',options:[
+  {label:'Gezondheidszorg / medische sector',value:'health'},
+  {label:'Financiële dienstverlening (bank, verzekering, krediet)',value:'finance'},
+  {label:'Overheid of publieke sector',value:'government'},
+  {label:'HR / recruitment / personeelsbeheer',value:'hr'},
+  {label:'Onderwijs',value:'education'},
+  {label:'Retail / e-commerce',value:'retail'},
+  {label:'Industrie / productie',value:'industry'},
+  {label:'Energie, water, transport of digitale infrastructuur',value:'energy'},
+  {label:'Anders',value:'other'}
+]},
+{id:'v0_8',step:'m0',text:'In welke fase bevindt het project zich momenteel?',hint:'De fase bepaalt de urgentie van bevindingen.',type:'single',options:[
+  {label:'Idee / haalbaarheidsonderzoek',value:'idea'},
+  {label:'Data verzameling en voorbereiding',value:'data_prep'},
+  {label:'Model- of systeemontwikkeling',value:'development'},
+  {label:'Testen en validatie',value:'testing'},
+  {label:'Implementatie / livegang',value:'implementation'},
+  {label:'Al in productie',value:'production'}
+]},
+{id:'v0_9a',step:'m0',text:'Wordt in dit project interne data gecombineerd met openbare of externe bronnen?',hint:'Bijv. overheidsdata, nieuws, sociale media, publiek beschikbare datasets.',type:'single',options:[
+  {label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v0_9b',step:'m0',text:'Worden gegevens ingekocht of gelicentieerd van externe dataleveranciers?',hint:'Bijv. commerciële datasets, databrokers.',type:'single',options:[
+  {label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v0_10',step:'m0',text:'Hoeveel medewerkers heeft uw organisatie?',hint:'',type:'single',options:[
+  {label:'Minder dan 10 (micro-onderneming)',value:'micro'},
+  {label:'10–49 (klein)',value:'small'},
+  {label:'50–249 (middelgroot)',value:'50_249'},
+  {label:'250 of meer (groot)',value:'250plus'}
+]},
+{id:'v0_11',step:'m0',text:'In welk geografisch gebied wordt het systeem of product aangeboden of ingezet?',hint:'Dit gegeven bepaalt de territoriale werkingssfeer van vrijwel alle modules.',type:'single',options:[
+  {label:'Uitsluitend in Nederland',value:'nl'},
+  {label:'In de EU (inclusief Nederland)',value:'eu'},
+  {label:'Zowel binnen als buiten de EU',value:'eu_global'},
+  {label:'Uitsluitend buiten de EU',value:'outside_eu'},
+  {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v0_12',step:'m0',text:'Wat is de primaire rol van uw organisatie in dit project?',hint:'Uw rol bepaalt fundamenteel welke verplichtingen op u rusten.',type:'single',options:[
+  {label:'Ontwikkelaar — wij bouwen het systeem of het product zelf (intern of voor een klant)',value:'developer'},
+  {label:'Inkoper / deployer — wij schaffen een extern systeem in en zetten het in onze eigen context in',value:'deployer'},
+  {label:'Beide — wij ontwikkelen het systeem én zetten het zelf in',value:'both'},
+  {label:'Intermediair / platform — wij bieden het systeem aan als tussenpersoon',value:'intermediary'},
+  {label:'Weet ik niet',value:'unknown'}
+]},
+
+// ── MODULE 1 — EU AI Act ─────────────────────────────────────
+{id:'v1_1',step:'m1',text:'Wat doet het systeem concreet?',hint:'De AI Act hanteert een specifieke definitie van een AI-systeem. Niet alle software of algoritmen vallen hieronder. Selecteer de beste omschrijving.',type:'single',
+  skipIf:(a)=>!m1Active(a),
+  options:[
+    {label:'Vaste, door mensen geprogrammeerde regels ("als X dan Y") zonder enige vorm van leren of redeneren',value:'rules'},
+    {label:'Statistische methoden, machine learning, deep learning of neurale netwerken',sub:'Om op basis van data patronen te herkennen of voorspellingen te doen',value:'ml'},
+    {label:'Logisch redeneren, optimalisatie of zoekmethoden',sub:'Om conclusies te trekken of beslissingen te nemen',value:'logic'},
+    {label:'Generatie van tekst, afbeeldingen, audio, video of andere content op basis van data of prompts',value:'gen'},
+    {label:'Combinatie van meerdere methoden',value:'combo'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v1_2',step:'m1',text:'Genereert het systeem outputs — zoals voorspellingen, aanbevelingen, beslissingen, classificaties of gegenereerde content — op basis van de verwerking van input?',hint:'Systemen die enkel data opslaan of weergeven zonder eigen outputs te genereren, vallen buiten de definitie van een AI-systeem.',type:'single',
+  skipIf:(a)=>!m1Active(a)||a.v1_1==='rules',
+  options:[
+    {label:'Ja',value:'yes'},
+    {label:'Nee — het systeem slaat data op of toont data, maar genereert geen eigen outputs',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v1_3',step:'m1',text:'Zijn deze outputs bedoeld om te worden gebruikt voor besluitvorming, het beïnvloeden van omgevingen of het genereren van content — ook als er een mens tussenbeide komt?',hint:'De definitie omvat ook systemen waarbij een mens de uiteindelijke beslissing neemt op basis van de AI-output.',type:'single',
+  skipIf:(a)=>!m1Active(a)||a.v1_1==='rules'||a.v1_2==='no',
+  options:[
+    {label:'Ja — outputs worden gebruikt om besluiten te onderbouwen of te nemen (al dan niet automatisch)',value:'decision'},
+    {label:'Ja — outputs zijn bedoeld om content te genereren die extern wordt gebruikt',value:'content'},
+    {label:'Nee — outputs dienen uitsluitend als interne technische tussenstap zonder externe toepassing',value:'internal'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v1_4',step:'m1',text:'Waar wordt het AI-systeem op de markt gebracht of in gebruik gesteld?',hint:'De AI Act heeft een brede extraterritoriale werking.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a),
+  options:[
+    {label:'In de Europese Unie (of een deel daarvan)',value:'eu'},
+    {label:'Buiten de EU, maar de output wordt gebruikt door personen of organisaties in de EU',value:'outside_eu_effect'},
+    {label:'Uitsluitend buiten de EU — de output heeft geen effect op personen of entiteiten in de EU',value:'outside_no_effect'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v1_7',step:'m1',text:'Is het systeem uitsluitend bestemd voor militaire doeleinden, nationale veiligheid of defensie?',hint:'Dergelijke toepassingen zijn expliciet uitgezonderd van de AI Act (art. 2 lid 3).',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect',
+  options:[
+    {label:'Ja — uitsluitend militair of nationale veiligheidsdoeleinden',value:'yes'},
+    {label:'Nee',value:'no'},
+    {label:'Gedeeltelijk of weet ik niet',value:'partial'}
+]},
+{id:'v1_8',step:'m1',text:'Is het systeem uitsluitend bestemd voor wetenschappelijk onderzoek en ontwikkeling, waarbij het systeem nog niet op de markt is gebracht?',hint:'De onderzoeksuitzondering geldt uitsluitend voor pre-commercieel onderzoek.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes',
+  options:[
+    {label:'Ja — uitsluitend pre-commercieel onderzoek en ontwikkeling',value:'yes'},
+    {label:'Gedeeltelijk — het systeem wordt ook al toegepast buiten de pure onderzoekscontext',value:'partial'},
+    {label:'Nee',value:'no'}
+]},
+{id:'v1_9',step:'m1',text:'Is het systeem uitsluitend bestemd voor persoonlijk, niet-professioneel gebruik door particulieren?',hint:'Bijv. een zelfgebouwde tool voor eigen huishoudelijk gebruik.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes',
+  options:[
+    {label:'Ja — uitsluitend persoonlijk en niet-professioneel gebruik',value:'yes'},
+    {label:'Nee',value:'no'}
+]},
+// Verboden toepassingen
+{id:'v1_10',step:'m1',text:'Maakt het systeem gebruik van subliminale technieken, manipulatieve methoden of misleidende technieken om het gedrag van personen te beïnvloeden buiten hun bewustzijn?',hint:'Art. 5 lid 1 sub a AI Act — verboden toepassing.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_11',step:'m1',text:'Maakt het systeem gebruik van kwetsbaarheden van specifieke groepen (kinderen, ouderen, personen met een beperking) om hun gedrag te beïnvloeden op een wijze die hen of anderen schade kan berokkenen?',hint:'Art. 5 lid 1 sub b AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_12',step:'m1',text:'Wordt het systeem gebruikt voor het beoordelen of classificeren van personen op basis van sociaal gedrag over een langere periode, met als gevolg nadelige behandeling (social scoring door overheidsinstanties)?',hint:'Art. 5 lid 1 sub c AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_13',step:'m1',text:'Wordt het systeem gebruikt voor biometrische real-time identificatie op afstand voor rechtshandhavingsdoeleinden, buiten de wettelijke uitzonderingen?',hint:'Art. 5 lid 1 sub d AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Niet van toepassing',value:'na'}]},
+{id:'v1_14',step:'m1',text:'Maakt het systeem gebruik van emotieherkenning op de werkplek of in onderwijsinstellingen?',hint:'Art. 5 lid 1 sub f AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_15',step:'m1',text:'Wordt het systeem gebruikt voor biometrische categorisering op basis van gevoelige kenmerken zoals ras, politieke opvattingen, religie of seksuele gerichtheid?',hint:'Art. 5 lid 1 sub g AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_16',step:'m1',text:'Wordt het systeem gebruikt voor het scrapen van gezichtsafbeeldingen voor het aanleggen of uitbreiden van gezichtsherkenningsdatabases?',hint:'Art. 5 lid 1 sub e AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+// Hoog risico
+{id:'v1_17',step:'m1',text:'Maakt het AI-systeem deel uit van een product dat valt onder EU-productregelgeving en is het AI-systeem de veiligheidscomponent van dat product?',hint:'Art. 6 lid 1 AI Act. Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[
+    {label:'Ja — veiligheidscomponent van een medisch hulpmiddel (MDR/IVDR)',value:'mdr'},
+    {label:'Ja — veiligheidscomponent van een machine, speelgoed, lift, explosief of radioapparatuur',value:'machinery'},
+    {label:'Ja — veiligheidscomponent van een voertuig of luchtvaartcomponent',value:'vehicle'},
+    {label:'Nee — het systeem maakt geen deel uit van een dergelijk product',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v1_18',step:'m1',text:'Wordt het systeem ingezet op het gebied van biometrische identificatie of categorisering van personen? (Bijlage III, nr. 1)',hint:'Alleen tonen als niet al hoog-risico via productregelgeving.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[{label:'Ja — identificatie op afstand via biometrische kenmerken',value:'identify'},{label:'Ja — categorisering op basis van biometrische kenmerken',value:'categorize'},{label:'Nee',value:'no'}]},
+{id:'v1_19',step:'m1',text:'Wordt het systeem ingezet voor het beheer en de werking van kritieke infrastructuur? (Bijlage III, nr. 2)',hint:'Bijv. energie, water, gas, verwarming, wegverkeer, of digitale infrastructuur.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'}]},
+{id:'v1_20',step:'m1',text:'Wordt het systeem ingezet op het gebied van onderwijs of beroepsopleiding? (Bijlage III, nr. 3)',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[{label:'Ja — toegang tot of plaatsing in opleidingsinstellingen',value:'access'},{label:'Ja — beoordeling van prestaties of monitoring tijdens examens',value:'assess'},{label:'Nee',value:'no'}]},
+{id:'v1_21',step:'m1',text:'Wordt het systeem ingezet op het gebied van werkgelegenheid, personeelsmanagement of toegang tot zelfstandig werk? (Bijlage III, nr. 4)',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[{label:'Ja — werving of selectie van personen',value:'recruitment'},{label:'Ja — beslissingen over promotie, ontslag, taakverdeling of prestatiebewaking',value:'performance'},{label:'Nee',value:'no'}]},
+{id:'v1_22',step:'m1',text:'Wordt het systeem ingezet voor toegang tot of genot van essentiële private of publieke diensten? (Bijlage III, nr. 5)',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[
+    {label:'Ja — beoordeling van kredietwaardigheid of kredietscore',value:'credit'},
+    {label:'Ja — risicobeoordeling en prijsstelling bij levens- of zorgverzekeringen',value:'insurance'},
+    {label:'Ja — evaluatie van noodoproepen of prioritering hulpdiensten',value:'emergency'},
+    {label:'Ja — beoordeling van aanspraken op sociale uitkeringen of bijstand',value:'benefits'},
+    {label:'Nee',value:'no'}
+]},
+{id:'v1_23',step:'m1',text:'Wordt het systeem ingezet door of namens rechtshandhavingsautoriteiten? (Bijlage III, nr. 6)',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[
+    {label:'Ja — risicobeoordeling voor individuele personen (bijv. recidiverisico)',value:'risk'},
+    {label:'Ja — gebruik als leugendetector of vergelijkbaar instrument',value:'lie'},
+    {label:'Ja — beoordeling van betrouwbaarheid van bewijs',value:'evidence'},
+    {label:'Ja — profiling van personen in de context van opsporing of vervolging',value:'profiling'},
+    {label:'Nee',value:'no'}
+]},
+{id:'v1_24',step:'m1',text:'Wordt het systeem ingezet op het gebied van migratie, asiel of grensbeheer? (Bijlage III, nr. 7)',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'}]},
+{id:'v1_25',step:'m1',text:'Wordt het systeem ingezet voor rechtsbedeling of democratische processen? (Bijlage III, nr. 8)',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a),
+  options:[
+    {label:'Ja — het systeem ondersteunt rechtbanken bij beslissingen',value:'courts'},
+    {label:'Ja — het systeem wordt ingezet voor beïnvloeding van verkiezingen of democratische processen',value:'elections'},
+    {label:'Nee',value:'no'}
+]},
+// Art. 6 lid 3 uitzondering
+{id:'v1_26',step:'m1',text:'Is het AI-systeem bedoeld om uitsluitend voorbereidende taken uit te voeren die louter ter ondersteuning dienen, waarbij het geen directe invloed heeft op enige beslissing?',hint:'Art. 6 lid 3-uitzondering: bijv. een systeem dat documenten samenvat maar waarbij een mens altijd zelfstandig beslist.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRiskProduct(a)||!isBijlageIIIPositive(a),
+  options:[
+    {label:'Ja — het systeem is uitsluitend een voorbereidend hulpmiddel zonder directe invloed op de beslissing',value:'yes'},
+    {label:'Nee — de output heeft directe invloed op de uiteindelijke beslissing',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+// Beperkt risico
+{id:'v1_27',step:'m1',text:'Interageert het systeem rechtstreeks met mensen via een geautomatiseerde interface (bijv. een chatbot of virtuele assistent)?',hint:'Art. 50 AI Act — transparantieverplichtingen voor beperkt risico.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRisk(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'}]},
+{id:'v1_28',step:'m1',text:'Genereert het systeem synthetische of gemanipuleerde tekst, audio, video of afbeeldingen die als echt kunnen worden beschouwd ("deepfakes" of AI-gegenereerde content)?',hint:'Art. 50 AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRisk(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'}]},
+{id:'v1_29',step:'m1',text:'Maakt het systeem gebruik van emotieherkenning of biometrische categorisering als functionaliteit?',hint:'Art. 50 AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isHighRisk(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'}]},
+// Rol in de keten
+{id:'v1_30',step:'m1',text:'Ontwikkelt uw organisatie het AI-systeem en brengt zij het op de markt of stelt zij het in gebruik?',hint:'De AI Act onderscheidt: aanbieder (provider), gebruiker (deployer), importeur en distributeur.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[
+    {label:'Ja — wij ontwikkelen het systeem zelf en zetten het intern in',value:'provider_int'},
+    {label:'Ja — wij ontwikkelen het systeem en bieden het aan externe partijen aan',value:'provider_ext'},
+    {label:'Nee — wij gebruiken een door een derde partij ontwikkeld systeem',value:'no'}
+]},
+{id:'v1_31',step:'m1',text:'Zet uw organisatie het AI-systeem in voor eigen doeleinden, in uw eigen context, onder uw eigen verantwoordelijkheid?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isProvider(a),
+  options:[
+    {label:'Ja — wij zijn gebruiker/deployer van een systeem van een derde partij',value:'yes'},
+    {label:'Nee — wij distribueren of wederverkopen het systeem aan anderen',value:'no'}
+]},
+{id:'v1_32',step:'m1',text:'Brengt uw organisatie een door een derde partij ontwikkeld AI-systeem op de markt in de EU, zonder substantiële wijzigingen?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isProvider(a)||a.v1_31==='yes',
+  options:[
+    {label:'Ja — wij zijn importeur (het systeem is door een niet-EU-aanbieder ontwikkeld)',value:'importer'},
+    {label:'Ja — wij zijn distributeur (zonder substantiële wijzigingen)',value:'distributor'},
+    {label:'Nee',value:'no'}
+]},
+{id:'v1_33',step:'m1',text:'Wijzigt uw organisatie het AI-systeem substantieel, of ontwikkelt zij een eigen toepassing bovenop een bestaand AI-systeem?',hint:'Bij substantiële wijziging wordt de organisatie aangemerkt als aanbieder voor de gewijzigde versie (art. 25 AI Act).',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes'||isProvider(a),
+  options:[
+    {label:'Ja — wij passen het systeem substantieel aan of bouwen een eigen product op basis van een bestaand AI-systeem',value:'yes'},
+    {label:'Nee',value:'no'}
+]},
+// Stap 6A — Aanbiedersverplichtingen (hoog risico)
+{id:'v1_34',step:'m1',text:'Is er een kwaliteitsbeheersysteem (QMS) ingericht conform art. 17 AI Act?',hint:'Verplicht voor aanbieders van hoog-risico AI-systemen.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja — gedocumenteerd QMS aanwezig',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'},{label:'In ontwikkeling',value:'development'}]},
+{id:'v1_35',step:'m1',text:'Is er technische documentatie opgesteld conform art. 11 en Bijlage IV AI Act?',hint:'Voorwaarde voor de conformiteitsbeoordeling.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja — volledige technische documentatie conform Bijlage IV',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'},{label:'In ontwikkeling',value:'development'}]},
+{id:'v1_36',step:'m1',text:'Is er een systeem voor automatische logging van gebeurtenissen (audit trail) ingericht conform art. 12 AI Act?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja — volledige logging/audit trail aanwezig',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'}]},
+{id:'v1_37',step:'m1',text:'Zijn de vereiste transparantie-informatie en gebruikersinstructies conform art. 13 AI Act beschikbaar gesteld?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'}]},
+{id:'v1_38',step:'m1',text:'Is er een conformiteitsbeoordelingsprocedure doorlopen conform art. 43 AI Act?',hint:'Hoog-risico AI-systemen mogen niet op de markt worden gebracht zonder afgeronde conformiteitsbeoordeling.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja — self-assessment (intern)',value:'self'},{label:'Ja — beoordeling door een Notified Body',value:'notified'},{label:'Nee — maar vereist',value:'no_required'},{label:'Nee — niet van toepassing geacht',value:'no_na'}]},
+{id:'v1_39',step:'m1',text:'Is het systeem geregistreerd in de EU-databank voor hoog-risico AI-systemen conform art. 49 AI Act?',hint:'Registratie is verplicht voor marktintroductie.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja — systeem is geregistreerd',value:'yes'},{label:'Nee — maar vereist',value:'no_required'},{label:'In voorbereiding',value:'planned'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_40',step:'m1',text:'Is er een post-market monitoringplan ingericht conform art. 72 AI Act?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isProviderOrModifier(a)||!isHighRisk(a),
+  options:[{label:'Ja — monitoringplan gedocumenteerd en geïmplementeerd',value:'yes'},{label:'Nee',value:'no'},{label:'In ontwikkeling',value:'development'}]},
+// Stap 6B — Deployerverplichtingen (hoog risico)
+{id:'v1_41',step:'m1',text:'Is getoetst of het AI-systeem is aangeboden met de vereiste technische documentatie en conformiteitsverklaring van de aanbieder?',hint:'Art. 26 lid 1 AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isDeployer(a)||!isHighRisk(a),
+  options:[{label:'Ja — documentatie en CE-markering zijn gecontroleerd',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_42',step:'m1',text:'Is er een menselijk toezichtsysteem (human oversight) ingericht conform art. 26 lid 1 AI Act?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isDeployer(a)||!isHighRisk(a),
+  options:[{label:'Ja — gedocumenteerde toezichtsprocedure aanwezig',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'}]},
+{id:'v1_43',step:'m1',text:'Worden betrokkenen geïnformeerd dat zij zijn blootgesteld aan een hoog-risico AI-systeem?',hint:'Art. 26 lid 7 AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isDeployer(a)||!isHighRisk(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Niet van toepassing',value:'na'}]},
+{id:'v1_44',step:'m1',text:'Worden de logging-gegevens van het systeem bewaard conform de instructies van de aanbieder en art. 26 lid 6 AI Act?',hint:'',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isDeployer(a)||!isHighRisk(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_45',step:'m1',text:'Is er een procedure voor het melden van ernstige incidenten en storingen aan de aanbieder of aan de bevoegde autoriteit?',hint:'Art. 26 lid 5 AI Act.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||!isDeployer(a)||!isHighRisk(a),
+  options:[{label:'Ja — incidentprocedure is gedocumenteerd',value:'yes'},{label:'Nee',value:'no'},{label:'In ontwikkeling',value:'development'}]},
+// GPAI
+{id:'v1_46',step:'m1',text:'Wordt in het project gebruik gemaakt van een extern vooraf getraind AI-model dat voor meerdere uiteenlopende taken kan worden ingezet?',hint:'Bijv. een groot taalmodel, een foundation model of een generatief AI-model.',type:'single',
+  skipIf:(a)=>!m1Active(a)||!isAISystem(a)||a.v1_4==='outside_no_effect'||a.v1_7==='yes'||a.v1_8==='yes'||a.v1_9==='yes',
+  options:[
+    {label:'Ja — een extern GPAI-model wordt direct ingezet (bijv. via een API)',value:'api'},
+    {label:'Ja — een extern GPAI-model wordt verfijnd (fine-tuned) of aangepast',value:'finetuned'},
+    {label:'Nee — het model is volledig intern ontwikkeld voor een specifieke taak',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v1_47',step:'m1',text:'Is de organisatie de aanbieder van het GPAI-model (heeft de organisatie het model zelf getraind en stelt zij het ter beschikking aan anderen)?',hint:'',type:'single',
+  skipIf:(a)=>!usesGPAI(a),
+  options:[
+    {label:'Ja — wij zijn de aanbieder van het GPAI-model',value:'yes'},
+    {label:'Nee — wij gebruiken een GPAI-model van een derde partij',value:'no'}
+]},
+{id:'v1_48',step:'m1',text:'Is er technische documentatie opgesteld over het GPAI-model conform art. 53 en Bijlage XI/XII AI Act?',hint:'Alleen voor aanbieders van GPAI-modellen.',type:'single',
+  skipIf:(a)=>!usesGPAI(a)||!isGPAIProvider(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'In ontwikkeling',value:'development'}]},
+{id:'v1_49',step:'m1',text:'Zijn de auteursrechtelijke vereisten (transparantie over trainingsdata) nageleefd conform art. 53 lid 1 sub d AI Act?',hint:'Er dient een samenvatting te worden gepubliceerd van de gebruikte trainingsdata.',type:'single',
+  skipIf:(a)=>!usesGPAI(a)||!isGPAIProvider(a),
+  options:[{label:'Ja — samenvatting van trainingsdata is gepubliceerd',value:'yes'},{label:'Nee',value:'no'},{label:'In ontwikkeling',value:'development'}]},
+{id:'v1_50',step:'m1',text:'Is het GPAI-model getraind met een rekenkracht van meer dan 10^25 FLOP, of is het door de Europese Commissie aangewezen als model met systemisch risico?',hint:'Modellen boven deze drempel hebben aanvullende verplichtingen (art. 55 AI Act).',type:'single',
+  skipIf:(a)=>!usesGPAI(a)||!isGPAIProvider(a),
+  options:[{label:'Ja — rekenkracht overschrijdt de drempel of het model is aangewezen',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_51',step:'m1',text:'Welk GPAI-model van een derde partij wordt gebruikt, en is gecontroleerd of de aanbieder de GPAI-verplichtingen naleeft?',hint:'Bijv. GPT-4, Claude, Gemini, Llama, Mistral, etc.',type:'free',
+  skipIf:(a)=>!usesGPAI(a)||isGPAIProvider(a)},
+{id:'v1_52',step:'m1',text:'Worden de gebruiksvoorwaarden en technische beperkingen van het GPAI-model van de aanbieder nageleefd bij de inzet in dit project?',hint:'',type:'single',
+  skipIf:(a)=>!usesGPAI(a)||isGPAIProvider(a),
+  options:[{label:'Ja — de gebruiksvoorwaarden zijn gecontroleerd en worden nageleefd',value:'yes'},{label:'Gedeeltelijk',value:'partial'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v1_53',step:'m1',text:'Integreert de organisatie het GPAI-model in een eigen product of dienst die vervolgens aan derden wordt aangeboden?',hint:'Bij "ja" kwalificeert de organisatie als downstream aanbieder (art. 54 AI Act).',type:'single',
+  skipIf:(a)=>!usesGPAI(a)||isGPAIProvider(a),
+  options:[{label:'Ja — het GPAI-model is verwerkt in een eigen product voor externe afnemers',value:'yes'},{label:'Nee — het GPAI-model wordt uitsluitend intern ingezet',value:'no'}]},
+
+// ── MODULE 2 — AVG ───────────────────────────────────────────
+{id:'v2_1',step:'m2',text:'Welk type data wordt in dit project verwerkt?',hint:'De AVG is van toepassing zodra er persoonsgegevens worden verwerkt. Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m2Active(a),
+  options:[
+    {label:'Directe identificatoren: namen, e-mailadressen, telefoonnummers, BSN, personeelsnummers',value:'direct'},
+    {label:'Indirecte identificatoren: IP-adressen, cookie-IDs, apparaat-IDs, gebruikersnamen',value:'indirect'},
+    {label:'Gedragsdata: klikgedrag, zoekgeschiedenis, aankoophistorie, gebruikslogs',value:'behavior'},
+    {label:'Locatiedata: GPS-data, adresgegevens, reispatronen',value:'location'},
+    {label:'Financiële of transactiedata herleidbaar tot personen',value:'financial'},
+    {label:'Biometrische gegevens: vingerafdrukken, gezichtskenmerken, stem',value:'biometric'},
+    {label:'Gezondheids- of medische gegevens',value:'health'},
+    {label:'Foto\'s, video-opnames of audio-opnames van personen',value:'photos'},
+    {label:'Profileringsdata: gecombineerde gegevens voor een profiel van een persoon',value:'profiling'},
+    {label:'Uitsluitend geaggregeerde of volledig geanonimiseerde data',value:'anon'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_2',step:'m2',text:'Zijn de personen op wie de data betrekking heeft identificeerbaar — direct of indirect?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a),
+  options:[
+    {label:'Ja — de data is direct herleidbaar tot individuen (bijv. naam, BSN, e-mailadres)',value:'direct'},
+    {label:'Ja — de data is indirect herleidbaar (bijv. via combinatie van leeftijd, postcode en beroep)',value:'indirect'},
+    {label:'Nee — de data is volledig geanonimiseerd en heridentificatie is redelijkerwijs uitgesloten',value:'no'},
+    {label:'Weet ik niet — dit is nog niet beoordeeld',value:'unknown'}
+]},
+{id:'v2_2a',step:'m2',text:'Neemt het systeem beslissingen over individuele personen die rechtsgevolgen of vergelijkbaar significante gevolgen voor hen hebben, zonder wezenlijke menselijke tussenkomst?',hint:'Art. 22 AVG — volledig geautomatiseerde besluitvorming is in beginsel verboden.',type:'single',
+  skipIf:(a)=>!m2Active(a)||(a.v0_2!=='automated'&&Array.isArray(a.v2_1)&&!a.v2_1.includes('profiling')),
+  options:[
+    {label:'Ja — het systeem neemt volledig geautomatiseerde besluiten met rechtsgevolgen of significante gevolgen',value:'yes'},
+    {label:'Gedeeltelijk — een mens beoordeelt de output maar baseert zich sterk op de systeemuitkomst',value:'partial'},
+    {label:'Nee — besluiten worden altijd door een mens genomen',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_3',step:'m2',text:'Welke verwerkingshandelingen vinden plaats in dit project?',hint:'Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no',
+  options:[
+    {label:'Verzamelen of ontvangen van persoonsgegevens',value:'collect'},
+    {label:'Opslaan of bewaren van persoonsgegevens',value:'store'},
+    {label:'Raadplegen, analyseren of gebruiken van persoonsgegevens',value:'analyze'},
+    {label:'Doorsturen, delen of beschikbaar stellen aan derden',value:'share'},
+    {label:'Combineren of koppelen van datasets die persoonsgegevens bevatten',value:'combine'},
+    {label:'Verwijderen of vernietigen van persoonsgegevens',value:'delete'},
+    {label:'Geen van bovenstaande',value:'none'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_4',step:'m2',text:'Waar is de organisatie die de persoonsgegevens verwerkt gevestigd?',hint:'De AVG heeft een brede extraterritoriale werking.',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no',
+  options:[
+    {label:'In de EU/EER — de verwerking vindt volledig of gedeeltelijk plaats in het kader van activiteiten van een EU-vestiging',value:'eu'},
+    {label:'Buiten de EU/EER, maar de organisatie biedt goederen of diensten aan aan personen in de EU',value:'outside_offers_eu'},
+    {label:'Buiten de EU/EER, maar de organisatie monitort het gedrag van personen die zich in de EU bevinden',value:'outside_monitors_eu'},
+    {label:'Buiten de EU/EER en geen van de bovenstaande situaties is van toepassing',value:'outside_no_eu'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_5',step:'m2',text:'Is de verwerking uitsluitend bedoeld voor persoonlijke of huishoudelijke activiteiten (art. 2 lid 2 sub c AVG)?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu',
+  options:[
+    {label:'Ja — de verwerking heeft uitsluitend een persoonlijk of huishoudelijk karakter',value:'yes'},
+    {label:'Nee — de verwerking heeft een professioneel, commercieel of organisatorisch karakter',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_6',step:'m2',text:'Vindt de verwerking uitsluitend plaats door bevoegde autoriteiten voor doeleinden van opsporing, vervolging of handhaving van de openbare orde (art. 2 lid 2 sub d AVG)?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes',
+  options:[
+    {label:'Ja — uitsluitend verwerking door en voor strafrechtelijke handhavingsdoeleinden',value:'yes'},
+    {label:'Nee',value:'no'},
+    {label:'Gedeeltelijk of weet ik niet',value:'partial'}
+]},
+{id:'v2_7',step:'m2',text:'Worden in dit project bijzondere categorieën persoonsgegevens verwerkt (art. 9 AVG)?',hint:'Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes',
+  options:[
+    {label:'Ja — gezondheids- of medische gegevens',value:'health'},
+    {label:'Ja — biometrische gegevens met het oog op unieke identificatie',value:'biometric'},
+    {label:'Ja — genetische gegevens',value:'genetic'},
+    {label:'Ja — gegevens over ras of etnische afkomst',value:'race'},
+    {label:'Ja — gegevens over politieke opvattingen, religie of levensbeschouwing',value:'political'},
+    {label:'Ja — gegevens over vakbondslidmaatschap',value:'union'},
+    {label:'Ja — gegevens over seksuele gerichtheid of seksueel gedrag',value:'sexual'},
+    {label:'Nee — geen bijzondere categorieën',value:'no'}
+]},
+{id:'v2_8',step:'m2',text:'Worden strafrechtelijke persoonsgegevens verwerkt (art. 10 AVG)?',hint:'Gegevens over veroordelingen, strafbare feiten of daarmee verband houdende veiligheidsmaatregelen.',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes',
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v2_9',step:'m2',text:'Bepaalt uw organisatie het doel en de middelen van de verwerking van persoonsgegevens in dit project?',hint:'Verwerkingsverantwoordelijke vs. verwerker vs. gezamenlijk verantwoordelijke.',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes',
+  options:[
+    {label:'Ja — onze organisatie bepaalt zelfstandig waarvoor en hoe de data wordt verwerkt (verwerkingsverantwoordelijke)',value:'controller'},
+    {label:'Ja — samen met een of meer andere organisaties (gezamenlijke verwerkingsverantwoordelijken, art. 26 AVG)',value:'joint'},
+    {label:'Nee — onze organisatie verwerkt data uitsluitend in opdracht van een andere partij (verwerker)',value:'processor'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_10',step:'m2',text:'Is er een verwerkersovereenkomst gesloten met alle partijen die persoonsgegevens verwerken in opdracht van uw organisatie (art. 28 AVG)?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Ja — voor alle verwerkers is een verwerkersovereenkomst gesloten',value:'yes'},
+    {label:'Gedeeltelijk — voor sommige verwerkers ontbreekt een overeenkomst',value:'partial'},
+    {label:'Nee — er zijn geen verwerkersovereenkomsten',value:'no'},
+    {label:'Niet van toepassing — er worden geen derde verwerkers ingeschakeld',value:'na'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_11',step:'m2',text:'Op welke rechtmatige grondslag is de verwerking gebaseerd (art. 6 AVG)?',hint:'Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Toestemming van de betrokkene (art. 6 lid 1 sub a)',value:'consent'},
+    {label:'Noodzakelijk voor de uitvoering van een overeenkomst (art. 6 lid 1 sub b)',value:'contract'},
+    {label:'Noodzakelijk om te voldoen aan een wettelijke verplichting (art. 6 lid 1 sub c)',value:'legal'},
+    {label:'Noodzakelijk ter bescherming van vitale belangen (art. 6 lid 1 sub d)',value:'vital'},
+    {label:'Noodzakelijk voor de vervulling van een taak van algemeen belang (art. 6 lid 1 sub e)',value:'public'},
+    {label:'Noodzakelijk voor de behartiging van gerechtvaardigde belangen (art. 6 lid 1 sub f)',value:'legitimate'},
+    {label:'Dit is nog niet bepaald',value:'tbd'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_12',step:'m2',text:'Zijn betrokkenen geïnformeerd over de verwerking conform de informatieplichten van art. 13 en 14 AVG?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Ja — er is een actuele en volledige privacyverklaring beschikbaar en betrokkenen worden actief geïnformeerd',value:'yes'},
+    {label:'Gedeeltelijk — er is een privacyverklaring maar deze is onvolledig of verouderd',value:'partial'},
+    {label:'Nee — betrokkenen worden niet geïnformeerd',value:'no'},
+    {label:'In ontwikkeling',value:'development'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_13',step:'m2',text:'Is er een bewaartermijn vastgesteld voor de persoonsgegevens die in dit project worden verwerkt (art. 5 lid 1 sub e AVG)?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Ja — er is een gedocumenteerde bewaartermijn vastgesteld per categorie persoonsgegevens',value:'yes'},
+    {label:'Gedeeltelijk — voor sommige gegevenscategorieën is geen bewaartermijn bepaald',value:'partial'},
+    {label:'Nee — er is geen bewaartermijn bepaald',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_14',step:'m2',text:'Worden persoonsgegevens doorgegeven aan ontvangers buiten de EU/EER, of wordt gebruik gemaakt van dienstverleners die data buiten de EU/EER opslaan of verwerken (art. 44–49 AVG)?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Ja — doorgifte aan derde landen vindt plaats',value:'yes'},
+    {label:'Ja — onzeker of dataopslag of -verwerking buiten de EU/EER plaatsvindt (bijv. bij gebruik van Amerikaanse clouddiensten)',value:'uncertain'},
+    {label:'Nee — alle verwerking vindt plaats binnen de EU/EER',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_15',step:'m2',text:'Neemt het systeem geautomatiseerde beslissingen over individuele personen die rechtsgevolgen of vergelijkbaar significante gevolgen voor hen hebben, zonder menselijke tussenkomst (art. 22 AVG)?',hint:'Volledig geautomatiseerde besluitvorming is in beginsel verboden, tenzij een uitzondering van toepassing is.',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Ja — het systeem neemt volledig geautomatiseerde besluiten met rechtsgevolgen of significante gevolgen',value:'yes'},
+    {label:'Gedeeltelijk — een mens beoordeelt de output maar baseert zich sterk op de systeemuitkomst',value:'partial'},
+    {label:'Nee — beslissingen worden altijd door een mens genomen',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v2_16',step:'m2',text:'Zijn een of meer van de volgende situaties van toepassing die een DPIA-plicht activeren?',hint:'Meerdere antwoorden mogelijk. Art. 35 AVG.',type:'multi',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Het project verwerkt bijzondere categorieën persoonsgegevens op grote schaal (art. 35 lid 3 sub b AVG)',value:'special_large'},
+    {label:'Het project betreft stelselmatige en grootschalige monitoring van openbaar toegankelijke ruimten',value:'monitoring'},
+    {label:'Het systeem maakt gebruik van geautomatiseerde besluitvorming met aanzienlijke gevolgen (art. 35 lid 3 sub a AVG)',value:'automated'},
+    {label:'Er worden persoonsgegevens van kwetsbare personen verwerkt (kinderen, patiënten, werknemers)',value:'vulnerable'},
+    {label:'Het project combineert meerdere datasets op een wijze die betrokkenen niet redelijkerwijs verwachten',value:'combine'},
+    {label:'Het project verwerkt persoonsgegevens op grote schaal',value:'large_scale'},
+    {label:'Geen van bovenstaande situaties is van toepassing',value:'none'}
+]},
+{id:'v2_17',step:'m2',text:'Is er een DPIA uitgevoerd of gepland voor dit project?',hint:'',type:'single',
+  skipIf:(a)=>!m2Active(a)||a.v2_2==='no'||a.v2_4==='outside_no_eu'||a.v2_5==='yes'||a.v2_6==='yes'||(a.v2_9!=='controller'&&a.v2_9!=='joint'),
+  options:[
+    {label:'Ja — DPIA is uitgevoerd en gedocumenteerd',value:'done'},
+    {label:'Ja — DPIA is gestart maar nog niet afgerond',value:'ongoing'},
+    {label:'Gepland maar nog niet gestart',value:'planned'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet wat een DPIA inhoudt',value:'unknown'}
+]},
+
+// ── MODULE 3 — Data Act ───────────────────────────────────────
+{id:'v3_1',step:'m3',text:'Produceert, vervaardigt of verkoopt uw organisatie een fysiek product dat gegevens verzamelt over zijn gebruik of omgeving?',hint:'De Data Act regelt wie toegang heeft tot gegevens die worden gegenereerd door verbonden producten en gerelateerde diensten.',type:'single',
+  skipIf:(a)=>!m3Active(a),
+  options:[
+    {label:'Ja — het product verzamelt gegevens continu (via ingebouwde sensoren)',value:'yes_continuous'},
+    {label:'Ja — het product verzamelt gegevens ad hoc (bijv. alleen tijdens onderhoud)',value:'yes_adhoc'},
+    {label:'Nee — wij produceren geen fysiek product',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_2',step:'m3',text:'Kan het product de verzamelde gegevens doorgeven via een elektronische verbinding of apparaattoegang?',hint:'Bijv. wifi, Bluetooth, NFC, kabel, mobiel netwerk.',type:'single',
+  skipIf:(a)=>!m3Active(a)||(a.v3_1!=='yes_continuous'&&a.v3_1!=='yes_adhoc'),
+  options:[
+    {label:'Ja — het product kan gegevens doorsturen',value:'yes'},
+    {label:'Nee — het product verzamelt gegevens maar stuurt ze niet door',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_3',step:'m3',text:'Wat is de hoofdfunctie van het product?',hint:'',type:'single',
+  skipIf:(a)=>!m3Active(a)||(a.v3_1!=='yes_continuous'&&a.v3_1!=='yes_adhoc')||a.v3_2!=='yes',
+  options:[
+    {label:'Het uitvoeren van een specifieke taak — gegevens zijn een bijproduct van die taak',value:'task'},
+    {label:'Het opslaan, verwerken of doorgeven van gegevens ten behoeve van anderen dan de gebruiker zelf',value:'data_service'},
+    {label:'Beide — het product heeft een eigen specifieke functie én verzendt de daarbij gegenereerde gegevens',value:'both'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_3a',step:'m3',text:'Is het verbonden product reeds vóór 12 september 2025 voor het eerst op de EU-markt gebracht?',hint:'De Data Act is van toepassing vanaf 12 september 2025.',type:'single',
+  skipIf:(a)=>!m3Active(a)||a.v3_3==='data_service'||!a.v3_3,
+  options:[
+    {label:'Ja — het product is vóór 12 september 2025 in de handel gebracht',value:'before'},
+    {label:'Nee — het product wordt ná 12 september 2025 in de handel gebracht',value:'after'},
+    {label:'Het betreft een prototype dat (nog) niet in de handel is gebracht',value:'prototype'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_5',step:'m3',text:'Biedt uw organisatie een digitale dienst aan die verbonden is met een verbonden product?',hint:'Een gerelateerde dienst maakt een tweerichtingsgegevensuitwisseling met het verbonden product mogelijk.',type:'single',
+  skipIf:(a)=>!m3Active(a),
+  options:[
+    {label:'Ja — de dienst is onlosmakelijk verbonden met het product en het product kan bepaalde functies niet uitvoeren zonder deze dienst',value:'yes_integral'},
+    {label:'Ja — de dienst is achteraf aan het product verbonden om functies toe te voegen of te updaten',value:'yes_addon'},
+    {label:'Ja — maar de dienst beïnvloedt de werking van het product niet; het gaat om een ondersteunende dienst',value:'yes_support'},
+    {label:'Nee — wij bieden geen digitale dienst aan die verbonden is met een (verbonden) product',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_9',step:'m3',text:'Wat is de omvang van uw organisatie?',hint:'Micro- en kleine ondernemingen zijn vrijgesteld van Hoofdstuk II-verplichtingen van de Data Act. Middelgrote ondernemingen zijn het eerste jaar vrijgesteld.',type:'single',
+  skipIf:(a)=>!m3Active(a)||(a.v3_1==='no'&&(a.v3_5==='no'||a.v3_5==='yes_support'||!a.v3_5)),
+  options:[
+    {label:'Micro-onderneming (< 10 werknemers)',value:'micro'},
+    {label:'Kleine onderneming (10–49 werknemers)',value:'small'},
+    {label:'Middelgrote onderneming (50–249 werknemers)',value:'medium'},
+    {label:'Grote onderneming (250 of meer werknemers)',value:'large'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_12',step:'m3',text:'Welke rol speelt uw organisatie ten aanzien van de gegevens die door het verbonden product of de gerelateerde dienst worden gegenereerd?',hint:'',type:'single',
+  skipIf:(a)=>!m3Active(a),
+  options:[
+    {label:'Wij zijn fabrikant van het verbonden product en controleren de toegang tot de productgegevens (gegevenshouder)',value:'holder_manufacturer'},
+    {label:'Wij zijn aanbieder van een gerelateerde dienst en genereren gegevens tijdens de verlening van die dienst (gegevenshouder)',value:'holder_service'},
+    {label:'Wij ontvangen gegevens van een andere gegevenshouder op verzoek van de gebruiker (gegevensontvanger)',value:'recipient'},
+    {label:'Wij zijn de gebruiker van het verbonden product of de gerelateerde dienst',value:'user'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_19',step:'m3',text:'Voldoet het verbonden product of de gerelateerde dienst aan de transparantieverplichting: worden gebruikers vóór het sluiten van een overeenkomst geïnformeerd over de gegevens die worden gegenereerd?',hint:'Art. 3 lid 2 en 3 Data Act.',type:'single',
+  skipIf:(a)=>!m3Active(a)||(a.v3_12!=='holder_manufacturer'&&a.v3_12!=='holder_service'),
+  options:[
+    {label:'Ja — gebruikers worden volledig geïnformeerd (type, formaat, volume, opslag, toegang, bewaartermijnen)',value:'yes'},
+    {label:'Gedeeltelijk — informatie is beschikbaar maar onvolledig of niet proactief verstrekt',value:'partial'},
+    {label:'Nee — gebruikers worden niet geïnformeerd',value:'no'},
+    {label:'In ontwikkeling',value:'development'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v3_20',step:'m3',text:'Is het verbonden product of de gerelateerde dienst zodanig ontworpen dat gebruikers directe toegang hebben tot hun gegevens (access-by-design, art. 3 lid 1)?',hint:'',type:'single',
+  skipIf:(a)=>!m3Active(a)||(a.v3_12!=='holder_manufacturer'&&a.v3_12!=='holder_service'),
+  options:[
+    {label:'Ja — gebruikers hebben directe technische toegang (via een interface, API of download)',value:'yes'},
+    {label:'Nee — directe toegang is niet geïmplementeerd, maar indirecte toegang op verzoek is beschikbaar',value:'indirect'},
+    {label:'Nee — er is geen toegangsmechanisme beschikbaar',value:'no'},
+    {label:'Niet technisch haalbaar — de reden is gedocumenteerd',value:'not_feasible'},
+    {label:'In ontwikkeling',value:'development'}
+]},
+{id:'v3_21',step:'m3',text:'Stelt uw organisatie gegevens beschikbaar in een gestructureerd, algemeen gebruikt en machineleesbaar formaat (art. 4 lid 1)?',hint:'Gangbare formats zijn o.a. .xls, .xml, .csv of .json. Een PDF is geen machineleesbaar format in de zin van de Data Act.',type:'single',
+  skipIf:(a)=>!m3Active(a)||(a.v3_12!=='holder_manufacturer'&&a.v3_12!=='holder_service'),
+  options:[
+    {label:'Ja — gegevens worden beschikbaar gesteld in gangbare formats (bijv. JSON, XML, CSV)',value:'yes'},
+    {label:'Gedeeltelijk',value:'partial'},
+    {label:'Nee — gegevens worden uitsluitend beschikbaar gesteld in niet-machineleesbare formats (bijv. PDF)',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+
+// ── MODULE 4 — DGA ────────────────────────────────────────────
+{id:'v4_1',step:'m4',text:'Maakt het project gebruik van data die afkomstig is van overheidsinstanties of publieke databases?',hint:'De Data Governance Act regelt het hergebruik van beschermde overheidsdata.',type:'single',
+  skipIf:(a)=>!m4Active(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v4_2',step:'m4',text:'Is de overheidsdata die in het project wordt gebruikt volledig openbaar beschikbaar zonder beperkingen?',hint:'Bijv. via een open data-licentie zoals Creative Commons.',type:'single',
+  skipIf:(a)=>!m4Active(a)||a.v4_1!=='yes',
+  options:[
+    {label:'Ja, volledig open en vrij herbruikbaar (bijv. onder Open Data Richtlijn)',value:'open'},
+    {label:'Nee, de data is (deels) beschermd of aan beperkingen onderworpen',value:'protected'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v4_4',step:'m4',text:'Heeft de overheidsinstantie toestemming gegeven voor hergebruik van de beschermde data, of is er een formeel hergebruiksverzoek ingediend?',hint:'Art. 5 DGA.',type:'single',
+  skipIf:(a)=>!m4Active(a)||a.v4_1!=='yes'||a.v4_2==='open',
+  options:[
+    {label:'Ja, er is formele toestemming verkregen',value:'yes'},
+    {label:'Een hergebruiksverzoek is ingediend maar nog niet afgerond',value:'pending'},
+    {label:'Nee, er is geen toestemming gevraagd of verkregen',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v4_7',step:'m4',text:'Biedt uw organisatie een dienst aan die tot doel heeft het tot stand brengen van relaties tussen data-aanbieders en data-gebruikers, als neutrale tussenpersoon?',hint:'Denk aan: datacoöperaties, peer-to-peer datadeling, datamarktplaatsen, data-exchanges.',type:'single',
+  skipIf:(a)=>!m4Active(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v4_10',step:'m4',text:'Heeft uw organisatie als aanbieder van een databemiddelingsdienst een notificatie ingediend bij de bevoegde nationale autoriteit (in Nederland: ACM) voordat de dienst werd aangeboden?',hint:'Art. 11 DGA — notificatie is verplicht vóór aanvang van de dienst.',type:'single',
+  skipIf:(a)=>!m4Active(a)||a.v4_7!=='yes',
+  options:[
+    {label:'Ja, de notificatie is ingediend en afgerond',value:'yes'},
+    {label:'De notificatie is in voorbereiding maar nog niet ingediend',value:'pending'},
+    {label:'Nee, er is nog geen notificatie ingediend',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v4_13',step:'m4',text:'Verzamelt of beoogt uw organisatie data te verzamelen die vrijwillig ter beschikking wordt gesteld door individuen of ondernemingen, uitsluitend voor doeleinden van algemeen belang?',hint:'Bijv. wetenschappelijk onderzoek, verbetering van openbare diensten, volksgezondheid.',type:'single',
+  skipIf:(a)=>!m4Active(a),
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+{id:'v4_15',step:'m4',text:'Heeft uw organisatie een aanvraag ingediend voor erkenning als data-altruïsmeorganisatie bij de bevoegde nationale autoriteit?',hint:'',type:'single',
+  skipIf:(a)=>!m4Active(a)||a.v4_13!=='yes',
+  options:[
+    {label:'Ja, de aanvraag is ingediend en erkenning is verkregen',value:'recognized'},
+    {label:'Ja, de aanvraag is ingediend maar nog niet afgerond',value:'pending'},
+    {label:'Wij overwegen dit',value:'considering'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+
+// ── MODULE 5 — MDR ────────────────────────────────────────────
+{id:'v5_1',step:'m5',text:'Wat is het beoogde doel (intended purpose) van het systeem of de software?',hint:'De MDR is van toepassing op medische hulpmiddelen, inclusief software met een medisch doel (SaMD). Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m5Active(a),
+  options:[
+    {label:'Het stellen of ondersteunen van een diagnose',value:'diagnose'},
+    {label:'Het voorspellen of prognosticeren van een ziekte of klinische toestand',value:'prognose'},
+    {label:'Het monitoren van een fysiologische of pathologische toestand',value:'monitor'},
+    {label:'Het behandelen of verlichten van een ziekte, aandoening of letsel',value:'treat'},
+    {label:'Het screenen van patiënten of populaties op ziekte of risico',value:'screen'},
+    {label:'Het compenseren of vervangen van een anatomische structuur of fysiologische functie',value:'compensate'},
+    {label:'Geen van bovenstaande — het systeem heeft geen medisch doel',value:'none'}
+]},
+{id:'v5_4',step:'m5',text:'Wat doet de software precies met de data?',hint:'Software die data alleen opslaat of weergeeft zonder klinische interpretatie valt doorgaans buiten de MDR.',type:'multi',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1),
+  options:[
+    {label:'De software slaat data op, archiveert of geeft deze weer (zonder klinische interpretatie)',value:'store'},
+    {label:'De software genereert scores, risicowaarden, alarmen of aanbevelingen op basis van patiëntdata',value:'scores'},
+    {label:'De software trekt conclusies over een diagnose, prognose of behandeling',value:'conclusions'},
+    {label:'De software stuurt een fysiek medisch apparaat aan of controleert dit',value:'device_control'},
+    {label:'De software ondersteunt de planning van een chirurgische of therapeutische ingreep',value:'planning'}
+]},
+{id:'v5_5',step:'m5',text:'Is het systeem uitsluitend bedoeld voor wetenschappelijk onderzoek waarbij de uitkomsten niet worden gebruikt bij echte patiënten of klinische beslissingen?',hint:'',type:'single',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1),
+  options:[
+    {label:'Ja — uitsluitend onderzoek, geen directe patiënttoepassing',value:'research_only'},
+    {label:'Nee — het systeem wordt of wordt straks ook klinisch ingezet',value:'no'},
+    {label:'Hybride — de onderzoeksversie en de klinische versie zijn hetzelfde systeem',value:'hybrid'}
+]},
+{id:'v5_7',step:'m5',text:'Kan onjuiste informatie van het systeem leiden tot directe schade voor een patiënt?',hint:'Dit bepaalt mede de risicoklasse (Classificatieregel 11 MDR).',type:'single',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1)||a.v5_5==='research_only',
+  options:[
+    {label:'Ja — een verkeerde uitkomst kan direct leiden tot overlijden of ernstig letsel',value:'high'},
+    {label:'Ja — een verkeerde uitkomst kan leiden tot aanzienlijke verslechtering van de gezondheidstoestand',value:'medium'},
+    {label:'De impact is beperkt — een verkeerde uitkomst leidt hooguit tot tijdelijk ongemak',value:'low'},
+    {label:'De impact op de patiënt is verwaarloosbaar of indirect',value:'minimal'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v5_10',step:'m5',text:'Is het systeem al CE-gemarkeerd onder de MDR (Verordening (EU) 2017/745)?',hint:'',type:'single',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1)||a.v5_5==='research_only',
+  options:[
+    {label:'Ja, CE-markering onder MDR is verkregen',value:'yes_mdr'},
+    {label:'Ja, maar onder de vorige MDD (Richtlijn 93/42/EEG) — overgang naar MDR is nog lopende',value:'yes_mdd'},
+    {label:'Nee, het conformiteitsbeoordelingsproces is nog niet gestart',value:'no'},
+    {label:'Het proces is gestart maar de CE-markering is nog niet verkregen',value:'in_progress'},
+    {label:'Niet van toepassing',value:'na'}
+]},
+{id:'v5_12',step:'m5',text:'Is een technisch dossier (technical documentation) opgesteld conform Bijlage II en III MDR?',hint:'',type:'single',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1)||a.v5_5==='research_only',
+  options:[
+    {label:'Ja, het technisch dossier is volledig opgesteld',value:'yes'},
+    {label:'Gedeeltelijk — onderdelen ontbreken nog',value:'partial'},
+    {label:'Nee, dit is nog niet begonnen',value:'no'},
+    {label:'Weet ik niet wat dit inhoudt',value:'unknown'}
+]},
+{id:'v5_13',step:'m5',text:'Is er een Quality Management System (QMS) ingericht conform ISO 13485?',hint:'',type:'single',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1)||a.v5_5==='research_only',
+  options:[
+    {label:'Ja, ISO 13485-gecertificeerd QMS is aanwezig',value:'yes'},
+    {label:'Gedeeltelijk — een QMS is opgezet maar nog niet gecertificeerd',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v5_18',step:'m5',text:'Is de samenloop met de EU AI Act in kaart gebracht?',hint:'AI-systemen die tevens als medisch hulpmiddel kwalificeren, vallen gelijktijdig onder de MDR én de AI Act.',type:'single',
+  skipIf:(a)=>!m5Active(a)||(Array.isArray(a.v5_1)&&a.v5_1.includes('none')&&a.v5_1.length===1)||a.v5_5==='research_only',
+  options:[
+    {label:'Ja, de samenloop is juridisch en technisch geanalyseerd',value:'yes'},
+    {label:'Gedeeltelijk — de samenloop is gesignaleerd maar nog niet uitgewerkt',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Niet van toepassing — het systeem gebruikt geen AI',value:'na'}
+]},
+
+// ── MODULE 6 — NIS2 ───────────────────────────────────────────
+{id:'v6_1',step:'m6',text:'In welke sector(en) is uw organisatie primair actief? (NIS2-sectortoets)',hint:'NIS2 is alleen van toepassing op organisaties die activiteiten verrichten in één van de 18 aangewezen sectoren. Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m6Active(a),
+  options:[
+    {label:'Energie (elektriciteit, olie, gas, waterstof, warmte/koude) — essentieel',value:'energy'},
+    {label:'Transport (luchtvaart, spoorwegen, scheepvaart, wegvervoer) — essentieel',value:'transport'},
+    {label:'Banken en financiële marktinfrastructuren — essentieel',value:'finance'},
+    {label:'Gezondheidsvoorzieningen (ziekenhuizen, klinieken, diagnostische centra) — essentieel',value:'health'},
+    {label:'Drinkwater (productie, distributie) — essentieel',value:'water'},
+    {label:'Digitale infrastructuur (internet exchange, DNS, cloud, datacenters) — essentieel',value:'digital_infra'},
+    {label:'ICT-beheer (managed security services, managed service providers) — essentieel',value:'ict_mgmt'},
+    {label:'Overheid (ministeries, provincies, gemeenten, waterschappen) — essentieel',value:'government'},
+    {label:'Ruimtevaart (operatoren van grondinfrastructuur) — essentieel',value:'space'},
+    {label:'Post- en koeriersdiensten — belangrijk',value:'post'},
+    {label:'Afvalbeheer — belangrijk',value:'waste'},
+    {label:'Productie van medische hulpmiddelen, geneesmiddelen, computers — belangrijk',value:'manufacturing'},
+    {label:'Digitale dienstverleners (online marktplaatsen, zoekmachines, sociale netwerken) — belangrijk',value:'digital_services'},
+    {label:'Onderzoeksinstellingen — belangrijk',value:'research'},
+    {label:'Mijn organisatie is niet actief in een van deze sectoren',value:'none'}
+]},
+{id:'v6_2',step:'m6',text:'Wat is de organisatieomvang van uw organisatie?',hint:'NIS2 hanteert de EU-definitie voor bedrijfsomvang.',type:'single',
+  skipIf:(a)=>!m6Active(a)||!a.v6_1||(Array.isArray(a.v6_1)&&a.v6_1.includes('none')&&a.v6_1.length===1),
+  options:[
+    {label:'Groot (≥ 250 werknemers, of jaaromzet > € 50 miljoen én balanstotaal > € 43 miljoen)',value:'large'},
+    {label:'Middelgroot (50–249 werknemers, of jaaromzet € 10–50 miljoen)',value:'medium'},
+    {label:'Klein (10–49 werknemers)',value:'small'},
+    {label:'Micro (< 10 werknemers)',value:'micro'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v6_7',step:'m6',text:'Heeft uw organisatie zich al geregistreerd als NIS2-entiteit bij de bevoegde autoriteit?',hint:'Essentiële en belangrijke entiteiten zijn verplicht zich te registreren. In Nederland geldt de registratieplicht van kracht sinds 18 oktober 2024.',type:'single',
+  skipIf:(a)=>!m6Active(a)||!a.v6_1||(Array.isArray(a.v6_1)&&a.v6_1.includes('none')&&a.v6_1.length===1),
+  options:[
+    {label:'Ja, registratie is afgerond',value:'yes'},
+    {label:'In voorbereiding of ingediend maar nog niet afgerond',value:'pending'},
+    {label:'Nee, registratie is nog niet gestart',value:'no'},
+    {label:'Weet ik niet of registratie verplicht is',value:'unknown_required'},
+    {label:'Weet ik niet welke autoriteit bevoegd is',value:'unknown_authority'}
+]},
+{id:'v6_9',step:'m6',text:'Is er een risicoanalyse uitgevoerd voor de informatiebeveiliging van uw organisatie, specifiek gericht op netwerk- en informatiesystemen?',hint:'Art. 21 NIS2.',type:'single',
+  skipIf:(a)=>!m6Active(a)||!a.v6_1||(Array.isArray(a.v6_1)&&a.v6_1.includes('none')&&a.v6_1.length===1),
+  options:[
+    {label:'Ja, een actuele risicoanalyse is beschikbaar',value:'yes'},
+    {label:'Gedeeltelijk — er is een algemene risicoanalyse maar niet NIS2-specifiek',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v6_10',step:'m6',text:'Welke van de volgende technische en organisatorische maatregelen zijn geïmplementeerd?',hint:'Art. 21 NIS2 schrijft 10 categorieën cyberbeveiligingsmaatregelen voor. Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m6Active(a)||!a.v6_1||(Array.isArray(a.v6_1)&&a.v6_1.includes('none')&&a.v6_1.length===1),
+  options:[
+    {label:'Beleid inzake risicoanalyse en informatiesysteembeveiliging',value:'risk_policy'},
+    {label:'Incidentafhandeling (incident response procedures)',value:'incident'},
+    {label:'Bedrijfscontinuïteit (backup, disaster recovery, crisis management)',value:'continuity'},
+    {label:'Beveiliging van de toeleveringsketen (supply chain security)',value:'supply_chain'},
+    {label:'Beveiligde ontwikkeling van systemen (secure development lifecycle)',value:'secure_dev'},
+    {label:'Beleid en procedures voor cryptografie en versleuteling',value:'crypto'},
+    {label:'Personeelsbeveiliging, toegangscontrolebeleid en asset management',value:'access_control'},
+    {label:'Multi-factor authenticatie',value:'mfa'},
+    {label:'Geen van bovenstaande',value:'none'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v6_13',step:'m6',text:'Is er een procedure vastgesteld voor het melden van significante cybersecurity-incidenten bij de bevoegde autoriteit?',hint:'Essentiële en belangrijke entiteiten moeten significante incidenten binnen 24 uur melden (early warning), binnen 72 uur een incidentmelding indienen.',type:'single',
+  skipIf:(a)=>!m6Active(a)||!a.v6_1||(Array.isArray(a.v6_1)&&a.v6_1.includes('none')&&a.v6_1.length===1),
+  options:[
+    {label:'Ja, een formele meldprocedure is vastgesteld',value:'yes'},
+    {label:'Gedeeltelijk — informeel geregeld',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+
+// ── MODULE 7 — CRA ────────────────────────────────────────────
+{id:'v7_1',step:'m7',text:'Betreft het project een product (hardware of software) dat digitale functionaliteit bevat?',hint:'De Cyber Resilience Act stelt verplichte cyberbeveiligingseisen aan producten met digitale elementen die commercieel op de EU-markt worden gebracht.',type:'single',
+  skipIf:(a)=>!m7Active(a),
+  options:[
+    {label:'Ja — het is software, een app of een digitaal product',value:'software'},
+    {label:'Ja — het is hardware met digitale/embedded functionaliteit (bijv. IoT-apparaat, router, sensor)',value:'hardware'},
+    {label:'Nee — het is uitsluitend een interne dienst zonder extern product',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v7_2',step:'m7',text:'Wordt dit product commercieel op de EU-markt gebracht?',hint:'De CRA is van toepassing op producten die commercieel op de markt worden gebracht — inclusief gratis producten met een commercieel oogmerk.',type:'single',
+  skipIf:(a)=>!m7Active(a)||a.v7_1==='no',
+  options:[
+    {label:'Ja — het product wordt verkocht aan externe partijen',value:'yes_sell'},
+    {label:'Ja — het product wordt gelicentieerd aan externe partijen',value:'yes_license'},
+    {label:'Ja — het product wordt gratis aangeboden aan externe partijen, maar met een commercieel oogmerk',value:'yes_free_commercial'},
+    {label:'Nee — het product is uitsluitend voor intern gebruik binnen de eigen organisatie',value:'no_internal'},
+    {label:'Nee — het betreft open-sourcesoftware zonder commercieel oogmerk',value:'no_opensource'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v7_4',step:'m7',text:'Valt het product onder een van de volgende specifieke uitzonderingen op de CRA?',hint:'',type:'single',
+  skipIf:(a)=>!m7Active(a)||a.v7_1==='no'||a.v7_2==='no_internal'||a.v7_2==='no_opensource',
+  options:[
+    {label:'Ja — het is een medisch hulpmiddel (valt onder MDR/IVDR)',value:'mdr'},
+    {label:'Ja — het is een voertuig of onderdeel waarvoor EU-typegoedkeuring geldt',value:'vehicle'},
+    {label:'Ja — het product is uitsluitend bestemd voor nationale veiligheid of defensie',value:'defense'},
+    {label:'Ja — het product valt onder luchtvaartregelgeving (EASA-verordening)',value:'aviation'},
+    {label:'Nee — geen van bovenstaande uitzonderingen van toepassing',value:'no'}
+]},
+{id:'v7_7',step:'m7',text:'Zijn er aantoonbare beveiligingsmaatregelen ingebouwd in het product tijdens de ontwikkeling (security by design)?',hint:'Bijv. secure coding practices, threat modeling, penetratietests.',type:'single',
+  skipIf:(a)=>!m7Active(a)||a.v7_1==='no'||a.v7_2==='no_internal'||a.v7_2==='no_opensource'||a.v7_4!=='no',
+  options:[
+    {label:'Ja — er is een formeel secure development lifecycle (SDL)-proces',value:'yes'},
+    {label:'Gedeeltelijk — sommige beveiligingsmaatregelen zijn genomen maar niet systematisch',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v7_8',step:'m7',text:'Is er een gedocumenteerd proces voor het identificeren en verhelpen van kwetsbaarheden, inclusief het uitbrengen van beveiligingsupdates gedurende de ondersteuningsperiode?',hint:'',type:'single',
+  skipIf:(a)=>!m7Active(a)||a.v7_1==='no'||a.v7_2==='no_internal'||a.v7_2==='no_opensource'||a.v7_4!=='no',
+  options:[
+    {label:'Ja — er is een formeel vulnerability management- en updateproces',value:'yes'},
+    {label:'Gedeeltelijk — updates worden uitgebracht maar zonder formeel beleid',value:'partial'},
+    {label:'Nee of nog niet geregeld',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v7_9',step:'m7',text:'Is er een procedure ingericht voor het melden van actief misbruikte kwetsbaarheden bij ENISA binnen de wettelijke termijnen?',hint:'24 uur eerste melding, 72 uur gedetailleerde melding. Verplicht per 11 september 2026.',type:'single',
+  skipIf:(a)=>!m7Active(a)||a.v7_1==='no'||a.v7_2==='no_internal'||a.v7_2==='no_opensource'||a.v7_4!=='no',
+  options:[
+    {label:'Ja — er is een meldprocedure ingericht',value:'yes'},
+    {label:'Nee — er is geen procedure',value:'no'},
+    {label:'Dit is nog niet bepaald',value:'tbd'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v7_10',step:'m7',text:'Is er technische documentatie opgesteld over de cyberbeveiligingseigenschappen van het product, en is er een conformiteitsverklaring (DoC) en CE-markering beschikbaar of in voorbereiding?',hint:'',type:'single',
+  skipIf:(a)=>!m7Active(a)||a.v7_1==='no'||a.v7_2==='no_internal'||a.v7_2==='no_opensource'||a.v7_4!=='no',
+  options:[
+    {label:'Ja — documentatie en CE-markering zijn beschikbaar',value:'yes'},
+    {label:'In voorbereiding',value:'pending'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+
+// ── MODULE 8 — EAA ────────────────────────────────────────────
+{id:'v8_1',step:'m8',text:'Worden het product of de dienst (direct of indirect) aangeboden aan consumenten (eindgebruikers buiten uw eigen organisatie) in de EU?',hint:'De European Accessibility Act verplicht aanbieders van bepaalde digitale producten en diensten om hun aanbod toegankelijk te maken voor mensen met een beperking.',type:'single',
+  skipIf:(a)=>!m8Active(a),
+  options:[
+    {label:'Ja — het product of de dienst is (mede) bestemd voor consumenten',value:'yes'},
+    {label:'Nee — het is uitsluitend een B2B-product of interne toepassing zonder consumentcontact',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v8_2',step:'m8',text:'Valt het product of de dienst onder de scope van de EAA?',hint:'Meerdere antwoorden mogelijk.',type:'multi',
+  skipIf:(a)=>!m8Active(a)||a.v8_1!=='yes',
+  options:[
+    {label:'E-commerce: website of app van een webwinkel of online marktplaats',value:'ecommerce'},
+    {label:'Bankdiensten: online bankieren, betalingsdiensten of financiële apps voor consumenten',value:'banking'},
+    {label:'Digitale communicatie: telecomdiensten, berichten- of communicatiediensten',value:'telecom'},
+    {label:'Apparaten: computers, laptops, smartphones, tablets of tv-apparatuur voor consumenten',value:'devices'},
+    {label:'Zelfbedieningsapparaten: geldautomaten, ticketautomaten of incheckautomaten',value:'kiosks'},
+    {label:'Media en informatie: e-books, e-readers of audiovisuele mediadiensten',value:'media'},
+    {label:'Vervoersdiensten: reisinformatie, boekingssystemen voor lucht-, bus-, trein- of watervervoer',value:'transport'},
+    {label:'Chatbot of conversational AI-interface die wordt ingezet als onderdeel van een in-scope product of dienst',value:'chatbot'},
+    {label:'Geen van bovenstaande',value:'none'}
+]},
+{id:'v8_3',step:'m8',text:'Is uw organisatie een micro-onderneming?',hint:'Minder dan 10 medewerkers én een jaaromzet of balanstotaal van maximaal € 2 miljoen. Micro-ondernemingen zijn vrijgesteld van EAA-verplichtingen.',type:'single',
+  skipIf:(a)=>!m8Active(a)||a.v8_1!=='yes'||(Array.isArray(a.v8_2)&&a.v8_2.includes('none')),
+  options:[
+    {label:'Ja — wij zijn een micro-onderneming (beide criteria zijn van toepassing)',value:'yes'},
+    {label:'Nee — wij overschrijden ten minste één van deze drempels',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v8_4',step:'m8',text:'Betreft het een dienst die al vóór 28 juni 2025 werd aangeboden op basis van een lopend contract?',hint:'Bestaande diensten mogen doorlopen tot het contract afloopt, met een uiterste datum van 28 juni 2030. Nieuwe diensten moeten direct voldoen per 28 juni 2025.',type:'single',
+  skipIf:(a)=>!m8Active(a)||a.v8_1!=='yes'||(Array.isArray(a.v8_2)&&a.v8_2.includes('none'))||a.v8_3==='yes',
+  options:[
+    {label:'Ja — de dienst werd al aangeboden vóór 28 juni 2025 op basis van een lopend contract',value:'existing'},
+    {label:'Nee — het is een nieuwe dienst of een dienst waarvan het contract na 28 juni 2025 ingaat',value:'new'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v8_5',step:'m8',text:'Is het product of de dienst toegankelijk voor mensen met een visuele, auditieve, motorische of cognitieve beperking, conform de WCAG 2.1 Level AA-norm (of de Europese norm EN 301 549)?',hint:'',type:'single',
+  skipIf:(a)=>!m8Active(a)||a.v8_1!=='yes'||(Array.isArray(a.v8_2)&&a.v8_2.includes('none'))||a.v8_3==='yes',
+  options:[
+    {label:'Ja — wij voldoen aantoonbaar aan WCAG 2.1 Level AA of EN 301 549',value:'yes'},
+    {label:'Gedeeltelijk — er zijn toegankelijkheidsmaatregelen genomen maar geen volledige audit uitgevoerd',value:'partial'},
+    {label:'Nee — toegankelijkheid is niet of nauwelijks meegenomen in het ontwerp',value:'no'},
+    {label:'Niet van toepassing — het product heeft geen gebruikersinterface voor eindgebruikers',value:'na'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v8_6',step:'m8',text:'Is er een toegankelijkheidsverklaring (accessibility statement) opgesteld en gepubliceerd?',hint:'',type:'single',
+  skipIf:(a)=>!m8Active(a)||a.v8_1!=='yes'||(Array.isArray(a.v8_2)&&a.v8_2.includes('none'))||a.v8_3==='yes',
+  options:[
+    {label:'Ja — er is een toegankelijkheidsverklaring beschikbaar',value:'yes'},
+    {label:'In voorbereiding',value:'pending'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet wat een toegankelijkheidsverklaring is',value:'unknown'}
+]},
+{id:'v8_9',step:'m8',text:'Is er een mechanisme beschikbaar waarmee gebruikers toegankelijkheidsproblemen kunnen melden of om een toegankelijk alternatief kunnen vragen?',hint:'',type:'single',
+  skipIf:(a)=>!m8Active(a)||a.v8_1!=='yes'||(Array.isArray(a.v8_2)&&a.v8_2.includes('none'))||a.v8_3==='yes',
+  options:[
+    {label:'Ja — er is een contactmogelijkheid of feedbackformulier beschikbaar',value:'yes'},
+    {label:'Nee',value:'no'},
+    {label:'In ontwikkeling',value:'development'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+
+// ── MODULE 9 — IE-rechten (altijd actief) ─────────────────────
+{id:'v9_1',step:'m9',text:'Zijn de externe databronnen die worden gebruikt beschermd door auteursrecht of databankrecht?',hint:'IE-rechten bepalen wie eigenaar is van data, analyses, modellen en software. Denk aan: commerciële datasets, krantenartikelen, academische publicaties, afbeeldingen.',type:'single',
+  options:[
+    {label:'Ja — we gebruiken aantoonbaar beschermde bronnen',value:'yes'},
+    {label:'Nee — we gebruiken uitsluitend publiek domein data of data in eigen beheer',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_2',step:'m9',text:'Heeft u de licentievoorwaarden gecontroleerd van alle externe databronnen die worden gebruikt, inclusief de vraag of het beoogde gebruik (bijv. training van een AI-model) is toegestaan?',hint:'',type:'single',
+  options:[
+    {label:'Ja — alle bronnen zijn gecontroleerd en toegestaan gebruik is bevestigd',value:'yes'},
+    {label:'Gedeeltelijk — sommige bronnen zijn gecontroleerd, andere nog niet',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_3',step:'m9',text:'Wordt data verzameld via web scraping, crawling of geautomatiseerde extractie van externe websites of databases?',hint:'',type:'single',
+  options:[
+    {label:'Ja — data wordt actief gescraped of geëxtraheerd van externe bronnen',value:'yes'},
+    {label:'Nee — alle data is verkregen via licenties, APIs of eigen bronnen',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_3a',step:'m9',text:'Hebben de betrokken rechtenhouders een expliciete opt-out ingesteld voor Text and Data Mining (TDM) gebruik?',hint:'Op grond van de DSM-richtlijn (art. 4) is TDM voor commerciële doeleinden alleen toegestaan als de rechtenhouder geen opt-out heeft ingesteld.',type:'single',
+  skipIf:(a)=>a.v9_3!=='yes',
+  options:[
+    {label:'Ja — er is een TDM opt-out vastgesteld bij een of meer bronnen',value:'yes'},
+    {label:'Nee — er is geen opt-out vastgesteld',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_4',step:'m9',text:'Is het AI-model getraind of wordt het getraind op data afkomstig van derden?',hint:'Bijv. teksten van het internet, foto\'s, geluidsopnames, datasets van externe leveranciers.',type:'single',
+  options:[
+    {label:'Ja',value:'yes'},
+    {label:'Nee — het model is uitsluitend getraind op intern gegenereerde data',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_5',step:'m9',text:'Wordt er gebruik gemaakt van open-source softwarebibliotheken, frameworks of pre-trained AI-modellen?',hint:'Bijv. een foundation model of LLM.',type:'single',
+  options:[
+    {label:'Ja — we gebruiken open-source componenten of een pre-trained model',value:'yes'},
+    {label:'Nee — het model is volledig zelf ontwikkeld zonder externe componenten',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_5a',step:'m9',text:'Zijn de licentievoorwaarden van de gebruikte open-source componenten of modellen gecontroleerd op compatibiliteit met het beoogde gebruik?',hint:'Copyleft-licenties zoals GPL kunnen verplichten om afgeleid werk ook open source te publiceren.',type:'single',
+  skipIf:(a)=>a.v9_5!=='yes',
+  options:[
+    {label:'Ja — alle licenties zijn gecontroleerd en zijn compatibel (bijv. MIT, Apache 2.0)',value:'yes'},
+    {label:'Gedeeltelijk — niet alle licenties zijn gecontroleerd',value:'partial'},
+    {label:'Nee — licenties zijn nog niet gecontroleerd',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_8',step:'m9',text:'Genereert het systeem tekst, afbeeldingen, analyses, code of andere content die vervolgens extern wordt gebruikt, gepubliceerd of aan klanten wordt geleverd?',hint:'',type:'single',
+  options:[{label:'Ja',value:'yes'},{label:'Nee',value:'no'}]},
+{id:'v9_9',step:'m9',text:'Is intern vastgelegd wie eigenaar is van het model, de trainingsdata en de output die dit project genereert?',hint:'Bijv. in arbeidscontracten, aandeelhoudersafspraken of een intern IP-beleid.',type:'single',
+  options:[
+    {label:'Ja — dit is contractueel vastgelegd',value:'yes'},
+    {label:'Gedeeltelijk — mondeling of informeel besproken',value:'partial'},
+    {label:'Nee',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_10',step:'m9',text:'Zijn er IP-clausules opgenomen in contracten met externe ontwikkelaars, dataleveranciers, opdrachtnemers of eindgebruikers?',hint:'',type:'single',
+  options:[
+    {label:'Ja — alle relevante contracten bevatten IP-clausules',value:'yes'},
+    {label:'Gedeeltelijk — sommige contracten bevatten IP-clausules, andere niet',value:'partial'},
+    {label:'Nee — er zijn geen IP-clausules in de contracten opgenomen',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v9_11',step:'m9',text:'Worden in het systeem of de output namen, logo\'s, technische methoden of uitvindingen gebruikt die mogelijk door derden zijn geregistreerd als merk of octrooi?',hint:'',type:'single',
+  options:[{label:'Ja of mogelijk',value:'yes'},{label:'Nee',value:'no'},{label:'Weet ik niet',value:'unknown'}]},
+
+// ── MODULE 10 — Contracten (altijd actief) ────────────────────
+{id:'v10_1',step:'m10',text:'Is in het contract vastgelegd dat de inputdata (aangeleverd door de klant) eigendom blijft van de klant en niet door de ontwikkelaar mag worden gebruikt voor andere doeleinden?',hint:'',type:'single',
+  options:[
+    {label:'Ja — er is een expliciete data-eigendomsclausule opgenomen',value:'yes'},
+    {label:'Gedeeltelijk — er is een beperking maar niet volledig uitgewerkt',value:'partial'},
+    {label:'Nee — dit is niet geregeld in het contract',value:'no'},
+    {label:'Er is nog geen contract gesloten',value:'no_contract'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_2',step:'m10',text:'Mag de ontwikkelaar de inputdata van de klant gebruiken om het AI-model te verbeteren of te hertrainen voor andere klanten of eigen producten?',hint:'',type:'single',
+  options:[
+    {label:'Nee — retraining op klantdata voor andere doeleinden is contractueel uitgesloten',value:'excluded'},
+    {label:'Ja — de ontwikkelaar heeft het recht om klantdata te gebruiken voor retraining',value:'yes'},
+    {label:'Dit is niet geregeld in het contract',value:'not_regulated'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_4',step:'m10',text:'Is in het contract vastgelegd wie verwerkingsverantwoordelijke is en wie verwerker in de zin van de AVG?',hint:'',type:'single',
+  skipIf:(a)=>a.v0_5==='no',
+  options:[
+    {label:'Ja — de rolverdeling is contractueel vastgelegd, inclusief een verwerkersovereenkomst',value:'yes'},
+    {label:'Gedeeltelijk — de rolverdeling is besproken maar niet volledig contractueel uitgewerkt',value:'partial'},
+    {label:'Nee — dit is niet geregeld',value:'no'},
+    {label:'Niet van toepassing — er worden geen persoonsgegevens verwerkt',value:'na'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_6',step:'m10',text:'Is in het contract vastgelegd wie eigenaar wordt van het specifiek voor dit project ontwikkelde AI-model (foreground-IP)?',hint:'',type:'single',
+  options:[
+    {label:'Ja — het model gaat over naar de klant na (volledige) betaling',value:'client'},
+    {label:'Ja — de ontwikkelaar behoudt het IP op het model; de klant krijgt een gebruikslicentie',value:'developer'},
+    {label:'Ja — er is een gedeeld eigendomsmodel overeengekomen',value:'shared'},
+    {label:'Nee — dit is niet geregeld in het contract',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_7',step:'m10',text:'Is vastgelegd wie eigenaar is van de content, analyses of beslissingen die het AI-systeem genereert (output-eigendom)?',hint:'',type:'single',
+  options:[
+    {label:'Ja — de klant is eigenaar van de gegenereerde output',value:'client'},
+    {label:'Ja — de ontwikkelaar behoudt rechten op de output of bepaalde afleidingen daarvan',value:'developer'},
+    {label:'Nee — dit is niet geregeld',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_9',step:'m10',text:'Is in het contract geregeld wie aansprakelijk is voor schade die voortvloeit uit foute of schadelijke output van het AI-systeem?',hint:'Bijv. hallucinaties, discriminerende uitkomsten, onjuiste adviezen.',type:'single',
+  options:[
+    {label:'Ja — aansprakelijkheid is contractueel verdeeld tussen ontwikkelaar en klant',value:'yes'},
+    {label:'Gedeeltelijk — er is een aansprakelijkheidsbeperking maar geen volledige verdeling',value:'partial'},
+    {label:'Nee — aansprakelijkheid is niet geregeld',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_12',step:'m10',text:'Is in het contract geregeld dat de klant zijn data kan exporteren in een open of machine-leesbaar formaat bij beëindiging van de samenwerking?',hint:'',type:'single',
+  options:[
+    {label:'Ja — dataportabiliteit is contractueel geregeld in een open formaat',value:'yes'},
+    {label:'Gedeeltelijk — export is mogelijk maar niet in een gestandaardiseerd of open formaat',value:'partial'},
+    {label:'Nee — dataportabiliteit is niet geregeld',value:'no'},
+    {label:'Weet ik niet',value:'unknown'}
+]},
+{id:'v10_13',step:'m10',text:'Is geregeld dat de klant het getrainde model kan overnemen of laten overdragen als het contract eindigt, inclusief de modelgewichten en relevante documentatie?',hint:'',type:'single',
+  options:[
+    {label:'Ja — een model handoff-procedure is contractueel vastgelegd',value:'yes'},
+    {label:'Nee — de klant heeft geen recht op overdracht van het model',value:'no'},
+    {label:'Dit is niet geregeld',value:'not_regulated'},
+    {label:'Weet ik niet',value:'unknown'}
+]}
+
+]; // end questions
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let currentQ=0, answers={}, history=[], userInfo={name:'',org:'',email:''};
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function startScan(){currentQ=0;answers={};history=[];showScreen('screen-question');renderQuestion();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function getVisibleQuestions(){return questions.filter(q=>!q.skipIf||!q.skipIf(answers));}
+
+function renderQuestion(){
+  const vis=getVisibleQuestions();
+  if(currentQ>=vis.length){showEmailGate();return;}
+  const q=vis[currentQ];
+  const pct=(currentQ/vis.length)*100;
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-label').textContent=`${currentQ+1} / ${vis.length}`;
+  document.getElementById('q-step').textContent=MODULES[q.step]||q.step;
+  document.getElementById('q-text').textContent=q.text;
+  const hintEl=document.getElementById('q-hint');
+  if(q.hint){hintEl.textContent=q.hint;hintEl.style.display='block';}else{hintEl.style.display='none';}
+  document.getElementById('btn-back').style.visibility=currentQ===0?'hidden':'visible';
+  const optWrap=document.getElementById('options-wrap');
+  const freeWrap=document.getElementById('free-text-wrap');
+  const optList=document.getElementById('options-list');
+  const freeInput=document.getElementById('free-text-input');
+  if(q.type==='free'){
+    optWrap.style.display='none';freeWrap.style.display='block';
+    freeInput.value=answers[q.id]||'';freeInput.oninput=()=>updateNextBtn();
+  } else {
+    optWrap.style.display='block';freeWrap.style.display='none';optList.innerHTML='';
+    const isMulti=q.type==='multi';const curVal=answers[q.id];
+    q.options.forEach(opt=>{
+      const isSel=isMulti?(Array.isArray(curVal)?curVal:[]).includes(opt.value):curVal===opt.value;
+      const btn=document.createElement('button');
+      btn.className='option-btn'+(isMulti?' checkbox':'')+(isSel?' selected':'');
+      btn.innerHTML=`<div class="option-indicator"></div><div><div class="option-text">${opt.label}</div>${opt.sub?`<div class="option-sub">${opt.sub}</div>`:''}</div>`;
+      btn.onclick=()=>selectOption(opt.value,isMulti,q);
+      optList.appendChild(btn);
+    });
+  }
+  updateNextBtn();
+}
+
+function selectOption(value,isMulti,q){
+  if(isMulti){
+    let sel=Array.isArray(answers[q.id])?[...answers[q.id]]:[];
+    const exclusives=['none','unknown'];
+    if(exclusives.includes(value)){sel=[value];}
+    else{sel=sel.filter(v=>!exclusives.includes(v));if(sel.includes(value))sel=sel.filter(v=>v!==value);else sel.push(value);}
+    answers[q.id]=sel;
+    document.querySelectorAll('.option-btn').forEach((btn,i)=>{btn.classList.toggle('selected',sel.includes(q.options[i].value));});
+    updateNextBtn();
+  } else {
+    answers[q.id]=value;
+    document.querySelectorAll('.option-btn').forEach((btn,i)=>{btn.classList.toggle('selected',q.options[i].value===value);});
+    updateNextBtn();
+    setTimeout(()=>{if(currentQ<getVisibleQuestions().length-1)nextQuestion();else showEmailGate();},280);
+  }
+}
+
+function updateNextBtn(){
+  const vis=getVisibleQuestions();const q=vis[currentQ];if(!q)return;
+  const btn=document.getElementById('btn-next');
+  let has=false;
+  if(q.type==='free')has=(document.getElementById('free-text-input').value||'').trim().length>0;
+  else if(q.type==='multi'){const s=answers[q.id];has=Array.isArray(s)&&s.length>0;}
+  else has=answers[q.id]!==undefined&&answers[q.id]!==null;
+  btn.classList.toggle('enabled',has);
+  btn.textContent=currentQ===vis.length-1?'Bekijk resultaten →':'Volgende →';
+}
+
+function nextQuestion(){
+  const vis=getVisibleQuestions();const q=vis[currentQ];if(!q)return;
+  if(q.type==='free'){const v=(document.getElementById('free-text-input').value||'').trim();if(!v)return;answers[q.id]=v;}
+  else if(q.type==='multi'){const s=answers[q.id];if(!Array.isArray(s)||s.length===0)return;}
+  else{if(!answers[q.id])return;}
+  history.push(currentQ);
+  if(currentQ<vis.length-1){currentQ++;renderQuestion();}else showEmailGate();
+}
+
+function prevQuestion(){if(history.length>0){currentQ=history.pop();renderQuestion();}}
+
+// ═══════════════════════════════════════════════════════════════
+// EMAIL GATE
+// ═══════════════════════════════════════════════════════════════
+function showEmailGate(){showScreen('screen-email');document.getElementById('user-name').focus();}
+function clearEmailError(){document.getElementById('email-error').classList.remove('visible');document.getElementById('user-email').classList.remove('error');}
+function isValidEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+
+function submitEmail(){
+  const emailInput=document.getElementById('user-email');
+  const email=emailInput.value.trim();
+  if(!isValidEmail(email)){emailInput.classList.add('error');document.getElementById('email-error').classList.add('visible');return;}
+  userInfo.name=document.getElementById('user-name').value.trim()||'Niet opgegeven';
+  userInfo.org=document.getElementById('user-org').value.trim()||'Niet opgegeven';
+  userInfo.email=email;
+  const btn=document.getElementById('btn-submit-email');
+  btn.disabled=true;btn.textContent='Rapport verzenden…';
+  sendEmails(email,buildReportText())
+    .then(()=>{btn.textContent='Rapport verzonden ✓';setTimeout(()=>showResults(),700);})
+    .catch(()=>showResults());
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FINDINGS COMPUTATION
+// ═══════════════════════════════════════════════════════════════
+function computeFindings(){
+  const a=answers;const findings=[];
+
+  // ── Module 1 — AI Act ──
+  if(m1Active(a)){
+    if(hasForbiddenPractice(a)){
+      const fmap={v1_10:'Subliminale of manipulatieve technieken (art. 5 lid 1 sub a)',v1_11:'Misbruik van kwetsbaarheden van specifieke groepen (art. 5 lid 1 sub b)',v1_12:'Social scoring door overheidsinstanties (art. 5 lid 1 sub c)',v1_13:'Real-time biometrische identificatie voor rechtshandhaving (art. 5 lid 1 sub d)',v1_14:'Emotieherkenning op werkplek of in onderwijs (art. 5 lid 1 sub f)',v1_15:'Biometrische categorisering op gevoelige kenmerken (art. 5 lid 1 sub g)',v1_16:'Scraping van gezichtsafbeeldingen voor databases (art. 5 lid 1 sub e)'};
+      Object.entries(fmap).forEach(([k,label])=>{if(a[k]==='yes')findings.push({level:'blocker',module:'EU AI Act',name:'VERBODEN TOEPASSING — '+label,desc:'De betreffende toepassing mag niet worden ontwikkeld, op de markt gebracht of ingezet. Onmiddellijk juridisch advies is noodzakelijk voordat enige verdere stap wordt ondernomen.',meta:'Art. 5 AI Act | Fase: Business Assessment',fase:['Business Assessment']});});
+    }
+    if(isHighRisk(a)){
+      if(isProviderOrModifier(a)){
+        if(['partial','no'].includes(a.v1_34))findings.push({level:'blocker',module:'EU AI Act',name:'Hoog-risico AI — QMS ontbreekt of is onvolledig (art. 17)',desc:'Een gedocumenteerd kwaliteitsbeheersysteem is verplicht voor aanbieders van hoog-risico AI-systemen. Zonder QMS kan geen conformiteitsbeoordeling worden afgerond.',meta:'Art. 9, 17 AI Act | Fase: System Assessment',fase:['System Assessment']});
+        if(['partial','no'].includes(a.v1_35))findings.push({level:'blocker',module:'EU AI Act',name:'Hoog-risico AI — Technische documentatie ontbreekt (art. 11 + Bijlage IV)',desc:'Technische documentatie is een absolute voorwaarde voor de conformiteitsbeoordeling en marktintroductie.',meta:'Art. 11 AI Act; Bijlage IV | Fase: System Assessment',fase:['System Assessment']});
+        if(a.v1_38==='no_required')findings.push({level:'blocker',module:'EU AI Act',name:'Hoog-risico AI — Conformiteitsbeoordelingsprocedure niet doorlopen (art. 43)',desc:'Het systeem mag niet op de markt worden gebracht zonder afgeronde conformiteitsbeoordelingsprocedure.',meta:'Art. 43, 47, 48, 49 AI Act | Fase: System Assessment',fase:['System Assessment']});
+        if(['no_required','unknown'].includes(a.v1_39))findings.push({level:'blocker',module:'EU AI Act',name:'Hoog-risico AI — Niet geregistreerd in EU-databank (art. 49)',desc:'Registratie in de EU-databank is verplicht voor marktintroductie. Boete: tot 15M euro of 3% van de wereldwijde jaaromzet.',meta:'Art. 49 AI Act | Fase: System Assessment',fase:['System Assessment']});
+        if(['partial','no'].includes(a.v1_36))findings.push({level:'warning',module:'EU AI Act',name:'Hoog-risico AI — Logging/audit trail ontbreekt (art. 12)',desc:'Het systeem moet automatisch relevante gebeurtenissen registreren om toezicht en incidentonderzoek mogelijk te maken.',meta:'Art. 12 AI Act | Fase: System Assessment',fase:['System Assessment']});
+        if(a.v1_40==='no')findings.push({level:'warning',module:'EU AI Act',name:'Hoog-risico AI — Post-market monitoringplan ontbreekt (art. 72)',desc:'Post-market monitoring is een wettelijke verplichting voor hoog-risico AI-aanbieders.',meta:'Art. 72 AI Act | Fase: System Assessment',fase:['System Assessment']});
+      }
+      if(isDeployer(a)){
+        if(['partial','no','unknown'].includes(a.v1_41))findings.push({level:'warning',module:'EU AI Act',name:'Hoog-risico AI — Documentatie aanbieder niet gecontroleerd (art. 26)',desc:'Als deployer bent u verplicht te controleren of het systeem de vereiste documentatie en conformiteitsverklaring heeft.',meta:'Art. 26 lid 1 AI Act | Fase: System Assessment',fase:['System Assessment']});
+        if(['partial','no'].includes(a.v1_42))findings.push({level:'warning',module:'EU AI Act',name:'Hoog-risico AI — Menselijk toezichtsysteem ontbreekt (art. 26)',desc:'De AI Act vereist oprecht menselijk toezicht met een gedocumenteerde procedure die automatiebias voorkomt.',meta:'Art. 26 lid 1 AI Act | Fase: System Assessment',fase:['System Assessment']});
+      }
+    }
+    if(a.v1_26==='yes'&&isBijlageIIIPositive(a))findings.push({level:'warning',module:'EU AI Act',name:'Art. 6 lid 3-uitzondering ingeroepen — documenteer intern',desc:'Hoewel het systeem in een Bijlage III-toepassingsgebied valt, geeft u aan dat het uitsluitend voorbereidende taken uitvoert. Dit dient intern schriftelijk en onderbouwd te worden vastgelegd.',meta:'Art. 6 lid 3 AI Act | Fase: Functional Assessment',fase:['Functional Assessment']});
+    if(a.v1_27==='yes')findings.push({level:'warning',module:'EU AI Act',name:'Transparantieverplichting — chatbot of virtuele assistent (art. 50 lid 1)',desc:'Gebruikers moeten actief worden geïnformeerd dat zij met een AI-systeem communiceren.',meta:'Art. 50 lid 1 AI Act | Fase: System Assessment',fase:['System Assessment']});
+    if(a.v1_28==='yes')findings.push({level:'warning',module:'EU AI Act',name:'Transparantieverplichting — AI-gegenereerde content (art. 50 lid 2)',desc:'AI-gegenereerde content dient machineleesbaar te worden gelabeld.',meta:'Art. 50 lid 2 AI Act | Fase: System Assessment',fase:['System Assessment']});
+    if(usesGPAI(a)&&isGPAIProvider(a)){
+      if(a.v1_48!=='yes')findings.push({level:'blocker',module:'EU AI Act',name:'GPAI-aanbieder — Technische documentatie ontbreekt (art. 53)',desc:'Aanbieders van GPAI-modellen zijn verplicht technische documentatie op te stellen conform art. 53 en Bijlage XI/XII AI Act.',meta:'Art. 53 AI Act | Fase: Functional/System Assessment',fase:['Functional Assessment','System Assessment']});
+      if(a.v1_50==='yes')findings.push({level:'blocker',module:'EU AI Act',name:'GPAI-model met systemisch risico — aanvullende verplichtingen (art. 51–55)',desc:'Het GPAI-model overschrijdt de drempel van 10^25 FLOP. Aanvullende verplichtingen: adversarial testing, incidentmelding aan de Europese Commissie, cyberbeveiligingsmaatregelen.',meta:'Art. 51, 55 AI Act | Fase: System Assessment',fase:['System Assessment']});
+    }
+    if(!isAISystem(a)&&m1Active(a))findings.push({level:'monitor',module:'EU AI Act',name:'Systeem kwalificeert mogelijk niet als AI-systeem (art. 3 lid 1)',desc:'Op basis van uw antwoorden kwalificeert het systeem mogelijk niet als AI-systeem in de zin van de AI Act. Leg de intended purpose schriftelijk vast.',meta:'Art. 3 lid 1 AI Act | Fase: Business Assessment',fase:['Business Assessment']});
+  }
+
+  // ── Module 2 — AVG ──
+  if(m2Active(a)){
+    if(a.v2_2==='unknown')findings.push({level:'blocker',module:'AVG / GDPR',name:'Identificeerbaarheid betrokkenen niet beoordeeld (RF2.1)',desc:'Identificeerbaarheid is niet beoordeeld. Juridische analyse is vereist vóór verdere verwerking.',meta:'Art. 4 lid 1 AVG | Fase: Data Assessment',fase:['Data Assessment']});
+    if(Array.isArray(a.v2_11)&&(a.v2_11.includes('tbd')||a.v2_11.includes('unknown')))findings.push({level:'blocker',module:'AVG / GDPR',name:'Geen rechtmatige grondslag bepaald (art. 6 AVG) — RF2.2',desc:'Verwerking zonder geldige rechtmatige grondslag is onrechtmatig onder de AVG. Directe actie vereist.',meta:'Art. 6 AVG | Fase: Business Assessment',fase:['Business Assessment']});
+    const specialPresent=Array.isArray(a.v2_7)&&!a.v2_7.includes('no')&&a.v2_7.length>0;
+    if(specialPresent||a.v2_8==='yes')findings.push({level:'blocker',module:'AVG / GDPR',name:'Bijzondere categorieën persoonsgegevens — verhoogd beschermingsregime (art. 9/10 AVG) — RF2.3',desc:'Verwerking van bijzondere categorieën is in beginsel verboden, tenzij een specifieke uitzondering van toepassing is. DPIA-plicht is vrijwel zeker aanwezig.',meta:'Art. 9, 10 AVG | Fase: Data Assessment',fase:['Data Assessment']});
+    if(a.v2_15==='yes')findings.push({level:'blocker',module:'AVG / GDPR',name:'Volledig geautomatiseerde besluitvorming zonder betrokkenenrechten (art. 22 AVG) — RF2.4',desc:'Geautomatiseerde besluitvorming met rechtsgevolgen is in beginsel verboden. Uitzondering vereist; betrokkenenrechten (menselijke tussenkomst, bezwaar) moeten worden geborgd.',meta:'Art. 22 AVG | Fase: Functional Assessment',fase:['Functional Assessment']});
+    const dpiaRequired=Array.isArray(a.v2_16)&&!a.v2_16.includes('none')&&a.v2_16.length>0;
+    if(dpiaRequired&&(a.v2_17==='no'||a.v2_17==='unknown'))findings.push({level:'blocker',module:'AVG / GDPR',name:'DPIA-plicht aanwezig maar niet nagekomen (art. 35 AVG) — RF2.5',desc:'Een Data Protection Impact Assessment is verplicht maar is nog niet uitgevoerd. Het systeem mag niet in gebruik worden genomen.',meta:'Art. 35 AVG | Fase: System Assessment',fase:['System Assessment']});
+    if(['yes','uncertain'].includes(a.v2_14))findings.push({level:'warning',module:'AVG / GDPR',name:'Doorgifte van persoonsgegevens aan derde landen zonder overdrachtsgrondslag — RF2.6',desc:'Doorgifte aan landen buiten de EU/EER vereist een adequaatheidsbesluit, standaardcontractbepalingen of andere overdrachtsgrondslag.',meta:'Art. 44–49 AVG | Fase: System Assessment',fase:['System Assessment']});
+    if(['no','partial'].includes(a.v2_10))findings.push({level:'warning',module:'AVG / GDPR',name:'Ontbrekende of onvolledige verwerkersovereenkomst(en) (art. 28 AVG) — RF2.7',desc:'Voor alle ingeschakelde verwerkers is een verwerkersovereenkomst vereist. Zonder deze overeenkomst is er sprake van een AVG-overtreding.',meta:'Art. 28 AVG | Fase: Business Assessment',fase:['Business Assessment']});
+    if(a.v2_12==='no')findings.push({level:'warning',module:'AVG / GDPR',name:'Betrokkenen niet geïnformeerd conform art. 13/14 AVG — RF2.8',desc:'Betrokkenen hebben recht op informatie over de verwerking van hun persoonsgegevens. Stel een actuele privacyverklaring op.',meta:'Art. 13/14 AVG | Fase: System Assessment',fase:['System Assessment']});
+    if(['no','unknown'].includes(a.v2_13))findings.push({level:'warning',module:'AVG / GDPR',name:'Geen bewaartermijn vastgesteld (art. 5 lid 1 sub e AVG)',desc:'Het opslagbeperkingsbeginsel vereist dat persoonsgegevens niet langer worden bewaard dan noodzakelijk. Stel bewaartermijnen vast per gegevenscategorie.',meta:'Art. 5 lid 1 sub e AVG | Fase: Data Assessment',fase:['Data Assessment']});
+  }
+
+  // ── Module 3 — Data Act ──
+  if(m3Active(a)){
+    const isHolder=a.v3_12==='holder_manufacturer'||a.v3_12==='holder_service';
+    if(isHolder&&a.v3_20==='no')findings.push({level:'blocker',module:'Data Act',name:'Geen toegangsmechanisme beschikbaar voor gebruikers (art. 3/4 Data Act)',desc:'De gegevenshouder is verplicht gebruikers directe of indirecte toegang te bieden tot hun gegevens. Geen enkel toegangsmechanisme is een directe overtreding.',meta:'Art. 3, 4 Data Act | Fase: Functional Assessment',fase:['Functional Assessment']});
+    if(isHolder&&a.v3_19==='no')findings.push({level:'warning',module:'Data Act',name:'Transparantieverplichting jegens gebruikers niet nagekomen (art. 3 Data Act)',desc:'Gebruikers moeten vóór het sluiten van een overeenkomst worden geïnformeerd over de gegevens die worden gegenereerd.',meta:'Art. 3 Data Act | Fase: Functional Assessment',fase:['Functional Assessment']});
+    if(isHolder&&a.v3_21==='no')findings.push({level:'warning',module:'Data Act',name:'Gegevens niet beschikbaar in machineleesbaar formaat (art. 4 Data Act)',desc:'Gegevens moeten worden aangeboden in een gestructureerd, algemeen gebruikt en machineleesbaar formaat (bijv. JSON, XML, CSV). Een PDF volstaat niet.',meta:'Art. 4 Data Act | Fase: System Assessment',fase:['System Assessment']});
+    if(a.v3_9==='micro'||a.v3_9==='small')findings.push({level:'monitor',module:'Data Act',name:'MKB-vrijstelling Data Act van toepassing',desc:'Uw organisatie kwalificeert als micro- of kleine onderneming en is vrijgesteld van de informatieverstrekking- en toegangsverplichtingen van Hoofdstuk II van de Data Act. De regels over oneerlijke contractuele bedingen (Hoofdstuk IV) gelden wel voor alle organisaties.',meta:'Art. 7 Data Act | Fase: Business Assessment',fase:['Business Assessment']});
+  }
+
+  // ── Module 4 — DGA ──
+  if(m4Active(a)){
+    if(a.v4_1==='yes'&&a.v4_4==='no')findings.push({level:'blocker',module:'Data Governance Act',name:'Gebruik van beschermde overheidsdata zonder formele toestemming (art. 5 DGA)',desc:'Hergebruik van beschermde overheidsdata vereist formele toestemming van de overheidsinstantie. Gebruik zonder toestemming is een directe overtreding van de DGA.',meta:'Art. 5 DGA | Fase: Data Assessment',fase:['Data Assessment']});
+    if(a.v4_7==='yes'&&a.v4_10==='no')findings.push({level:'blocker',module:'Data Governance Act',name:'Databemiddelingsdienst aangeboden zonder notificatie bij ACM (art. 11 DGA)',desc:'Aanbieders van databemiddelingsdiensten moeten notificatie indienen bij de bevoegde nationale autoriteit (ACM) voordat de dienst wordt aangeboden.',meta:'Art. 11 DGA | Fase: Business Assessment',fase:['Business Assessment']});
+    if(a.v4_1==='yes'&&a.v4_4!=='no')findings.push({level:'warning',module:'Data Governance Act',name:'Gebruik van overheidsdata — licentiecheck en nalevingsverplichtingen',desc:'Controleer of de hergebruiksvoorwaarden die de overheidsinstantie heeft opgelegd volledig worden nageleefd.',meta:'Art. 5, 6 DGA | Fase: Data Assessment',fase:['Data Assessment']});
+  }
+
+  // ── Module 5 — MDR ──
+  if(m5Active(a)){
+    const mdrScope=Array.isArray(a.v5_1)&&!a.v5_1.includes('none');
+    if(mdrScope&&a.v5_5!=='research_only'){
+      if(a.v5_10==='yes_mdd')findings.push({level:'blocker',module:'MDR / IVDR',name:'CE-markering nog onder MDD — overgangsperiode verlopen (deadline was 26 mei 2024)',desc:'De overgangsperiode MDD→MDR is verlopen. Het systeem mag niet meer worden ingezet op basis van een MDD-certificering. Directe actie vereist: start MDR-conformiteitsbeoordelingsproces.',meta:'MDR Verordening (EU) 2017/745 | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v5_10==='no')findings.push({level:'blocker',module:'MDR / IVDR',name:'Medische software zonder CE-markering — conformiteitsbeoordelingsproces niet gestart',desc:'Software met een medisch doel die klinisch wordt gebruikt, moet CE-gemarkeerd zijn als medisch hulpmiddel. Gebruik zonder CE-markering is niet toegestaan.',meta:'MDR Verordening (EU) 2017/745 | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v5_12==='no')findings.push({level:'warning',module:'MDR / IVDR',name:'Geen technisch dossier opgesteld conform Bijlage II en III MDR',desc:'Een technisch dossier is een vereiste voor de conformiteitsbeoordeling. Start de opbouw van het technisch dossier zo vroeg mogelijk.',meta:'Bijlage II en III MDR | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v5_13==='no')findings.push({level:'warning',module:'MDR / IVDR',name:'Geen Quality Management System ingericht conform ISO 13485',desc:'Een QMS conform ISO 13485 is een kernvereiste voor CE-markering. Start de implementatie parallel aan de productontwikkeling.',meta:'Art. 10 MDR; ISO 13485 | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v5_18==='no'&&(a.v0_3==='ai_core'||a.v0_3==='ai_part'))findings.push({level:'warning',module:'MDR / IVDR',name:'Samenloop MDR + AI Act niet geanalyseerd',desc:'Het systeem gebruikt AI-technologie en valt mogelijk gelijktijdig onder de MDR én de AI Act. Beide regelgevingen stellen eisen aan technische documentatie, risicobeheer en conformiteitsbeoordeling.',meta:'MDR + AI Act | Fase: Business Assessment',fase:['Business Assessment']});
+    }
+  }
+
+  // ── Module 6 — NIS2 ──
+  if(m6Active(a)){
+    const nis2Sector=Array.isArray(a.v6_1)&&!a.v6_1.includes('none')&&a.v6_1.length>0;
+    if(nis2Sector){
+      if(a.v6_7==='no')findings.push({level:'blocker',module:'NIS2-richtlijn',name:'Essentiële/belangrijke entiteit zonder registratie bij bevoegde autoriteit',desc:'De registratieplicht is van kracht in Nederland sinds 18 oktober 2024. Niet-registratie is een directe overtreding. Registreer onmiddellijk bij de bevoegde autoriteit voor uw sector.',meta:'Art. 3 NIS2 | Fase: Business Assessment',fase:['Business Assessment']});
+      if(a.v6_13==='no')findings.push({level:'blocker',module:'NIS2-richtlijn',name:'Geen incidentmeldprocedure — meldplicht (art. 23 NIS2)',desc:'Essentiële en belangrijke entiteiten moeten significante incidenten binnen 24 uur melden (early warning) en binnen 72 uur een incidentmelding indienen bij de bevoegde autoriteit.',meta:'Art. 23 NIS2 | Fase: System Assessment',fase:['System Assessment']});
+      if(Array.isArray(a.v6_10)&&a.v6_10.includes('none'))findings.push({level:'blocker',module:'NIS2-richtlijn',name:'Geen van de 10 cyberbeveiligingsmaatregelen geïmplementeerd (art. 21 NIS2)',desc:'Art. 21 NIS2 schrijft 10 categorieën cyberbeveiligingsmaatregelen voor. Het ontbreken van enige maatregel bij een essentiële of belangrijke entiteit is een directe overtreding.',meta:'Art. 21 NIS2 | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v6_9==='no')findings.push({level:'warning',module:'NIS2-richtlijn',name:'Geen actuele risicoanalyse voor informatiebeveiliging (art. 21 NIS2)',desc:'Een actuele risicoanalyse specifiek gericht op netwerk- en informatiesystemen is een vereiste onder NIS2. Voer een NIS2-conforme risicoanalyse uit.',meta:'Art. 21 NIS2 | Fase: System Assessment',fase:['System Assessment']});
+    }
+  }
+
+  // ── Module 7 — CRA ──
+  if(m7Active(a)){
+    const craApplies=a.v7_1!=='no'&&['yes_sell','yes_license','yes_free_commercial'].includes(a.v7_2)&&a.v7_4==='no';
+    if(craApplies){
+      if(a.v7_8==='no')findings.push({level:'blocker',module:'Cyber Resilience Act',name:'Extern product zonder vulnerability management en updatebeleid (CRA)',desc:'De CRA verplicht aanbieders van producten met digitale elementen een updateproces te hanteren gedurende de verwachte levensduur. Ontbrekend updatebeleid is een kernverplichting.',meta:'CRA Bijlage I | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v7_9==='no')findings.push({level:'blocker',module:'Cyber Resilience Act',name:'Geen meldprocedure voor kwetsbaarheden bij ENISA — verplicht per 11 september 2026',desc:'Aanbieders moeten actief misbruikte kwetsbaarheden en ernstige beveiligingsincidenten melden bij ENISA binnen 24 respectievelijk 72 uur.',meta:'Art. 14 CRA | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v7_7==='no')findings.push({level:'warning',module:'Cyber Resilience Act',name:'Ontbrekende security by design (CRA Bijlage I)',desc:'De CRA vereist dat beveiliging structureel wordt ingebouwd tijdens de ontwikkelcyclus. Implementeer een formeel secure development lifecycle (SDL)-proces.',meta:'CRA Bijlage I | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v7_10==='no')findings.push({level:'warning',module:'Cyber Resilience Act',name:'Ontbrekende technische documentatie en CE-markering/DoC',desc:'Technische documentatie conform Bijlage VII CRA, een conformiteitsverklaring en CE-markering zijn vereist voor marktintroductie (verplicht per 11 december 2027).',meta:'CRA Bijlage VII | Fase: System Assessment',fase:['System Assessment']});
+    }
+  }
+
+  // ── Module 8 — EAA ──
+  if(m8Active(a)){
+    const eaaScope=a.v8_1==='yes'&&Array.isArray(a.v8_2)&&!a.v8_2.includes('none')&&a.v8_3!=='yes';
+    if(eaaScope){
+      if(a.v8_5==='no'&&a.v8_4==='new')findings.push({level:'blocker',module:'European Accessibility Act',name:'Nieuwe dienst niet toegankelijk — EAA-overtreding per 28 juni 2025 (RF8.1/RF8.4)',desc:'Het product of de dienst betreft een nieuwe aanbieding en is niet toegankelijk voor mensen met een beperking. Volledige naleving is vereist per 28 juni 2025.',meta:'EAA / Besluit toegankelijkheidsvoorschriften | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v8_6==='no')findings.push({level:'warning',module:'European Accessibility Act',name:'Ontbrekende toegankelijkheidsverklaring (RF8.2)',desc:'Een gepubliceerde toegankelijkheidsverklaring is wettelijk verplicht voor in-scope producten en diensten.',meta:'EAA | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v8_9==='no')findings.push({level:'warning',module:'European Accessibility Act',name:'Geen feedbackmechanisme voor gebruikers met beperking (RF8.6)',desc:'Er moet een mechanisme beschikbaar zijn waarmee gebruikers toegankelijkheidsproblemen kunnen melden.',meta:'EAA | Fase: System Assessment',fase:['System Assessment']});
+      if(a.v8_4==='existing')findings.push({level:'monitor',module:'European Accessibility Act',name:'Bestaande dienst — overgangsperiode t/m 28 juni 2030',desc:'De bestaande dienst valt in de overgangsperiode tot 28 juni 2030. Stel nu een migratieplan op om tijdige naleving te borgen.',meta:'EAA | Fase: Business Assessment',fase:['Business Assessment']});
+    }
+  }
+
+  // ── Module 9 — IE-rechten ──
+  if(a.v9_1==='yes'&&a.v9_2==='no')findings.push({level:'blocker',module:'IE-rechten',name:'Gebruik van beschermde databronnen zonder licentiecontrole (RF9.1)',desc:'Commercieel gebruik van beschermd materiaal zonder licentie of toepasselijke uitzonderingsbepaling constitueert een IE-inbreuk. Stel onmiddellijk een data-inventory op en controleer per bron de licentie.',meta:'Auteursrecht / Databankrecht | Fase: Business/Data Assessment',fase:['Business Assessment','Data Assessment']});
+  if(a.v9_3==='yes'&&a.v9_3a==='yes')findings.push({level:'blocker',module:'IE-rechten',name:'TDM opt-out aanwezig bij gescrapede bron — commercieel gebruik niet toegestaan (RF9.2)',desc:'De rechtenhouder heeft een expliciete opt-out ingesteld voor TDM. Commercieel scraping-gebruik van deze bron is niet geoorloofd. Stop het gebruik totdat een licentie is verkregen.',meta:'Art. 4 DSM-richtlijn | Fase: Data Assessment',fase:['Data Assessment']});
+  if(a.v9_4==='yes'&&['no','unknown'].includes(a.v9_2))findings.push({level:'warning',module:'IE-rechten',name:'Auteursrechtrisico bij trainingsdata (RF9.3)',desc:'Het AI-model is getraind op data van derden zonder verificatie van licentierechten. Dit vormt een substantieel auteursrechtrisico.',meta:'Auteursrecht / AI Act art. 53 | Fase: Data Assessment',fase:['Data Assessment']});
+  if(a.v9_5==='yes'&&['no','partial'].includes(a.v9_5a))findings.push({level:'warning',module:'IE-rechten',name:'Ongecontroleerde open-source licenties — risico op copyleft-verplichting (RF9.4)',desc:'Copyleft-licenties zoals GPL kunnen verplichten om afgeleid werk ook open source te publiceren. Dit kan conflicteren met een commercieel product.',meta:'Open-source licentierecht | Fase: Data Assessment',fase:['Data Assessment']});
+  if(['no','partial'].includes(a.v9_9))findings.push({level:'warning',module:'IE-rechten',name:'Onduidelijk intern eigendomsregime — model en output kunnen betwist worden (RF9.5)',desc:'Zonder expliciete IP-clausules bestaat het risico dat model en output bij een geschil worden betwist. Leg eigendomsafspraken contractueel vast.',meta:'Intern IP-beleid | Fase: Business/System Assessment',fase:['Business Assessment','System Assessment']});
+  if(['no','partial'].includes(a.v9_10))findings.push({level:'warning',module:'IE-rechten',name:'Geen of onvolledige IP-clausules in externe contracten (RF9.6)',desc:'Zonder IP-clausules in contracten met externe partijen kunnen eigendomsconflicten ontstaan over het model, de data en de output.',meta:'Contractenrecht / IP | Fase: Business/System Assessment',fase:['Business Assessment','System Assessment']});
+  if(a.v9_11==='yes')findings.push({level:'warning',module:'IE-rechten',name:'Risico op inbreuk op merk- of octrooirecht van derden (RF9.7)',desc:'Voer een merk- en octrooionderzoek uit vóór publicatie of marktintroductie.',meta:'Merkrecht / Octrooirecht | Fase: Business Assessment',fase:['Business Assessment']});
+
+  // ── Module 10 — Contracten ──
+  if(['no','partial'].includes(a.v2_10)||a.v10_4==='no')findings.push({level:'blocker',module:'Contracten',name:'Geen verwerkersovereenkomst bij verwerking van persoonsgegevens (RF10.1)',desc:'Het ontbreken van een verwerkersovereenkomst bij verwerking van persoonsgegevens door een derde partij constitueert een AVG-overtreding.',meta:'Art. 28 AVG | Fase: Data Assessment',fase:['Data Assessment']});
+  if(a.v10_6==='no')findings.push({level:'blocker',module:'Contracten',name:'IP-eigendom eindmodel niet vastgelegd (RF10.2)',desc:'Het eigendom van het ontwikkelde AI-model is niet contractueel geregeld. Dit is een showstopper bij een geschil. Leg dit vast vóór contractsluiting.',meta:'Contracten / IP | Fase: Business Assessment',fase:['Business Assessment']});
+  if(a.v10_9==='no')findings.push({level:'blocker',module:'Contracten',name:'Aansprakelijkheid voor AI-fouten niet contractueel verdeeld (RF10.3)',desc:'Bij schade veroorzaakt door onjuiste AI-output is onduidelijk wie aansprakelijk is. Dit is een kernbepaling die vóór livegang moet worden vastgelegd.',meta:'Aansprakelijkheidsrecht / AI | Fase: Functional Assessment',fase:['Functional Assessment']});
+  if(a.v10_2==='yes'||a.v10_2==='not_regulated')findings.push({level:'warning',module:'Contracten',name:'Retraining op klantdata voor andere doeleinden niet contractueel geblokkeerd (RF10.4)',desc:'Voeg een expliciete retraining-beperking toe aan het contract om ongeoorloofd hergebruik van klantdata te voorkomen.',meta:'Data governance / Contracten | Fase: Business Assessment',fase:['Business Assessment']});
+  if(a.v10_7==='no')findings.push({level:'warning',module:'Contracten',name:'Eigendom van AI-output onduidelijk (RF10.5)',desc:'Het eigendomsregime voor AI-gegenereerde output is niet contractueel vastgelegd. Dit leidt tot rechtsonzekerheid bij extern gebruik.',meta:'Contracten / IP | Fase: Business Assessment',fase:['Business Assessment']});
+  if(a.v10_12==='no')findings.push({level:'warning',module:'Contracten',name:'Geen dataportabiliteit bij contracteinde (RF10.8)',desc:'Zonder dataportabiliteitsclausule kan de klant bij contractbeëindiging zijn data niet meenemen. Dit creëert vendor lock-in.',meta:'Data governance / Exit | Fase: System Assessment',fase:['System Assessment']});
+  if(['no','not_regulated'].includes(a.v10_13))findings.push({level:'warning',module:'Contracten',name:'Geen model handoff-mogelijkheid (RF10.9)',desc:'Zonder model handoff-bepaling verliest de klant zijn investering in het getrainde model bij beëindiging van de samenwerking.',meta:'Contracten / Exit | Fase: Business/System Assessment',fase:['Business Assessment','System Assessment']});
+
+  if(findings.length===0)findings.push({level:'monitor',module:'Algemeen',name:'Geen specifieke compliance-risico\'s geïdentificeerd',desc:'Op basis van uw antwoorden zijn geen directe compliance-risico\'s vastgesteld. Aanbevolen: pas vrijwillige gedragscodes toe, documenteer uw aannames en hertoets periodiek.',meta:'Alle modules | Fase: Monitor',fase:['Business Assessment']});
+
+  return findings;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODULE SUMMARY
+// ═══════════════════════════════════════════════════════════════
+function computeModuleSummary(){
+  const a=answers;const findings=computeFindings();
+  const mf=(mod)=>findings.filter(f=>f.module===mod);
+  const fa=(mod)=>[...new Set(findings.filter(f=>f.module===mod).flatMap(f=>f.fase))];
+  const pri=(mod)=>{
+    const fs=mf(mod);
+    if(fs.some(f=>f.level==='blocker'))return'🔴 Nu';
+    if(fs.some(f=>f.level==='warning'))return'🟡 Voor go-live';
+    if(fs.some(f=>f.level==='monitor'))return'🟢 Monitor';
+    return'✅ Geen';
+  };
+  const rel=(mod,always,cond)=>always?'always':cond?'yes':'no';
+  return[
+    {num:'0',name:'Projectprofiel',relevant:'always',findings:[],fases:['Business Assessment'],prioriteit:'✅ N.v.t.'},
+    {num:'1',name:'EU AI Act',relevant:rel(null,false,m1Active(a)&&isAISystem(a)),findings:mf('EU AI Act'),fases:fa('EU AI Act'),prioriteit:pri('EU AI Act')},
+    {num:'2',name:'AVG / GDPR',relevant:rel(null,false,m2Active(a)&&a.v2_2!=='no'),findings:mf('AVG / GDPR'),fases:fa('AVG / GDPR'),prioriteit:pri('AVG / GDPR')},
+    {num:'3',name:'Data Act',relevant:rel(null,false,m3Active(a)),findings:mf('Data Act'),fases:fa('Data Act'),prioriteit:pri('Data Act')},
+    {num:'4',name:'Data Governance Act',relevant:rel(null,false,m4Active(a)),findings:mf('Data Governance Act'),fases:fa('Data Governance Act'),prioriteit:pri('Data Governance Act')},
+    {num:'5',name:'MDR / IVDR',relevant:rel(null,false,m5Active(a)),findings:mf('MDR / IVDR'),fases:fa('MDR / IVDR'),prioriteit:pri('MDR / IVDR')},
+    {num:'6',name:'NIS2-richtlijn',relevant:rel(null,false,m6Active(a)&&Array.isArray(a.v6_1)&&!a.v6_1.includes('none')),findings:mf('NIS2-richtlijn'),fases:fa('NIS2-richtlijn'),prioriteit:pri('NIS2-richtlijn')},
+    {num:'7',name:'Cyber Resilience Act',relevant:rel(null,false,m7Active(a)),findings:mf('Cyber Resilience Act'),fases:fa('Cyber Resilience Act'),prioriteit:pri('Cyber Resilience Act')},
+    {num:'8',name:'European Accessibility Act',relevant:rel(null,false,m8Active(a)&&a.v8_1==='yes'),findings:mf('European Accessibility Act'),fases:fa('European Accessibility Act'),prioriteit:pri('European Accessibility Act')},
+    {num:'9',name:'IE-rechten',relevant:'always',findings:mf('IE-rechten'),fases:fa('IE-rechten'),prioriteit:pri('IE-rechten')},
+    {num:'10',name:'Contracten',relevant:'always',findings:mf('Contracten'),fases:fa('Contracten'),prioriteit:pri('Contracten')}
+  ];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESULTS SCREEN
+// ═══════════════════════════════════════════════════════════════
+function showResults(){
+  const findings=computeFindings();const modules=computeModuleSummary();
+  const dateStr=new Date().toLocaleDateString('nl-NL',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('results-user-info').textContent=
+    userInfo.name+(userInfo.org&&userInfo.org!=='Niet opgegeven'?' · '+userInfo.org:'')+' · '+dateStr;
+
+  // Risk cards
+  const rc=document.getElementById('risk-cards');rc.innerHTML='';
+  [
+    {icon:'🔴',label:'Directe actie vereist',count:findings.filter(f=>f.level==='blocker').length,desc:'Showstoppers die het project kunnen blokkeren'},
+    {icon:'🟡',label:'Actie vereist',count:findings.filter(f=>f.level==='warning').length,desc:'Red flags die gemitigeerd moeten worden voor go-live'},
+    {icon:'🟢',label:'Monitor en documenteer',count:findings.filter(f=>f.level==='monitor').length,desc:'Laag risico, maar bijhouden en documenteren'}
+  ].forEach(item=>{
+    const card=document.createElement('div');card.className='risk-card';
+    card.innerHTML=`<div class="risk-card-icon">${item.icon}</div><div class="risk-card-label">${item.label}</div><div class="risk-card-count">${item.count}</div><div class="risk-card-desc">${item.desc}</div>`;
+    rc.appendChild(card);
+  });
+
+  // Module table
+  const tbody=document.getElementById('module-tbody');tbody.innerHTML='';
+  modules.forEach(m=>{
+    const bl=m.findings.filter(f=>f.level==='blocker').length;
+    const wa=m.findings.filter(f=>f.level==='warning').length;
+    const flagHtml=bl>0?`<span style="color:var(--red);font-weight:600">${bl} blocker${bl>1?'s':''}</span>${wa>0?` · <span style="color:var(--amber)">${wa} waarschuwing${wa>1?'en':''}</span>`:''}`
+      :wa>0?`<span style="color:var(--amber);font-weight:600">${wa} waarschuwing${wa>1?'en':''}</span>`
+      :'<span style="color:var(--muted)">—</span>';
+    const relHtml=m.relevant==='always'?`<span class="rel-always">✓ Altijd</span>`:m.relevant==='yes'?`<span class="rel-yes">✓ Ja</span>`:`<span class="rel-no">— Nee</span>`;
+    const faseHtml=m.fases.map(f=>`<span class="fase-pill">${f}</span>`).join('');
+    const priColor=m.prioriteit.includes('🔴')?'color:var(--red);font-weight:700':m.prioriteit.includes('🟡')?'color:var(--amber);font-weight:600':m.prioriteit.includes('🟢')?'color:var(--green);font-weight:500':'color:var(--muted)';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong>${m.num}</strong> — ${m.name}</td><td>${relHtml}</td><td>${faseHtml||'<span style="color:var(--muted)">—</span>'}</td><td>${flagHtml}</td><td style="${priColor}">${m.prioriteit}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Priority lists
+  const renderList=(id,level)=>{
+    const el=document.getElementById(id);el.innerHTML='';
+    const items=findings.filter(f=>f.level===level);
+    if(items.length===0){el.innerHTML=`<div class="empty-list">Geen bevindingen in deze categorie.</div>`;return;}
+    const iconMap={blocker:'🔴',warning:'🟡',monitor:'🟢'};
+    items.forEach(f=>{
+      const card=document.createElement('div');card.className=`priority-card ${f.level}`;
+      card.innerHTML=`<div class="priority-icon">${iconMap[f.level]}</div><div class="priority-body"><div class="priority-name">${f.name}</div><div class="priority-desc">${f.desc}</div><div class="priority-meta">${f.meta}</div><div class="priority-level ${f.level}">${f.level==='blocker'?'● Directe actie vereist':f.level==='warning'?'◑ Actie vereist voor go-live':'○ Monitor en documenteer'}</div></div>`;
+      el.appendChild(card);
+    });
+  };
+  renderList('list-blocker','blocker');renderList('list-warning','warning');renderList('list-monitor','monitor');
+
+  // Answers table
+  const ansBody=document.getElementById('answers-body');ansBody.innerHTML='';
+  let lastMod='';
+  getVisibleQuestions().forEach(q=>{
+    if(q.step!==lastMod){
+      const tr=document.createElement('tr');tr.className='step-group-header';
+      tr.innerHTML=`<td colspan="2">${MODULES[q.step]||q.step}</td>`;ansBody.appendChild(tr);lastMod=q.step;
+    }
+    const ans=answers[q.id];let ansStr='<span class="badge-skipped">Niet beantwoord</span>';
+    if(ans!==undefined&&ans!==null&&ans!==''){
+      if(Array.isArray(ans))ansStr=ans.map(v=>{const o=q.options?q.options.find(o=>o.value===v):null;return o?o.label:v;}).join(' · ');
+      else if(q.options){const o=q.options.find(o=>o.value===ans);ansStr=o?o.label:ans;}
+      else ansStr=ans;
+    }
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-size:0.82rem;color:var(--muted);max-width:340px;line-height:1.4">${q.text}</td><td style="font-weight:500;font-size:0.84rem">${ansStr}</td>`;
+    ansBody.appendChild(tr);
+  });
+  showScreen('screen-results');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// REPORT TEXT (for email)
+// ═══════════════════════════════════════════════════════════════
+function buildReportText(){
+  const findings=computeFindings();const modules=computeModuleSummary();const visible=getVisibleQuestions();
+  const dateStr=new Date().toLocaleDateString('nl-NL',{day:'2-digit',month:'long',year:'numeric'});
+  const lines=[];
+  lines.push('=== AI & DATA COMPLIANCE ASSESSMENT — bg.legal ===');
+  lines.push('');lines.push('Naam:        '+userInfo.name);lines.push('Organisatie: '+userInfo.org);lines.push('Datum:       '+dateStr);
+  lines.push('');lines.push('--- OVERALL RISICOSIGNALERING ---');
+  lines.push('🔴 Directe actie vereist:     '+findings.filter(f=>f.level==='blocker').length+' bevindingen');
+  lines.push('🟡 Actie vereist voor go-live: '+findings.filter(f=>f.level==='warning').length+' bevindingen');
+  lines.push('🟢 Monitor en documenteer:    '+findings.filter(f=>f.level==='monitor').length+' bevindingen');
+  lines.push('');lines.push('--- MODULE OVERZICHT ---');
+  modules.forEach(m=>{lines.push(`Module ${m.num} — ${m.name}`.padEnd(45)+' | Relevant: '+(m.relevant==='always'?'Altijd':m.relevant==='yes'?'Ja':'Nee').padEnd(8)+' | Prioriteit: '+m.prioriteit.replace(/[🔴🟡🟢✅]/g,'').trim());});
+  ['blocker','warning','monitor'].forEach(lvl=>{
+    const label=lvl==='blocker'?'🔴 DIRECTE ACTIE':lvl==='warning'?'🟡 ACTIE VEREIST':'🟢 MONITOR';
+    const items=findings.filter(f=>f.level===lvl);
+    if(items.length){lines.push('');lines.push('[ '+label+' ]');items.forEach((f,i)=>{lines.push(`${i+1}. [${f.module}] ${f.name}`);lines.push('   '+f.desc);lines.push('   '+f.meta);});}
+  });
+  lines.push('');lines.push('--- ANTWOORDEN ---');
+  let lastMod='';
+  visible.forEach(q=>{
+    if(q.step!==lastMod){lines.push('');lines.push('[ '+MODULES[q.step]||q.step+' ]');lastMod=q.step;}
+    const ans=answers[q.id];let ansStr='—';
+    if(ans!==undefined&&ans!==null&&ans!==''){
+      if(Array.isArray(ans))ansStr=ans.map(v=>{const o=q.options?q.options.find(o=>o.value===v):null;return o?o.label:v;}).join(' | ');
+      else if(q.options){const o=q.options.find(o=>o.value===ans);ansStr=o?o.label:ans;}
+      else ansStr=ans;
+    }
+    lines.push('V: '+q.text);lines.push('A: '+ansStr);
+  });
+  lines.push('');lines.push('bg.legal | info@bg.legal');
+  return lines.join('\n');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// E-MAIL — EmailJS
+// ═══════════════════════════════════════════════════════════════
+const EMAILJS_PUBLIC_KEY='YccltRPaDJjfynvr8';
+const EMAILJS_SERVICE_ID='service_zwmccyl';
+const EMAILJS_TEMPLATE_ID='template_gnxvdgl';
+const BG_EMAIL_ADDR='info@bg.legal';
+
+async function sendEmails(userEmail,reportText){
+  emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+  const findings=computeFindings();const modules=computeModuleSummary();
+  const dateStr=new Date().toLocaleDateString('nl-NL',{day:'2-digit',month:'long',year:'numeric'});
+  const levelLabel={blocker:'🔴 DIRECTE ACTIE',warning:'🟡 ACTIE VEREIST',monitor:'🟢 MONITOR'};
+  const bevindingen=findings.map((f,i)=>`${i+1}. ${levelLabel[f.level]} | ${f.module}\n   ${f.name}\n   ${f.desc}\n   ${f.meta}`).join('\n\n');
+  const moduleOverzicht=modules.map(m=>`Module ${m.num} — ${m.name.padEnd(30)} ${m.relevant==='always'?'Altijd':m.relevant==='yes'?'Relevant':'N.v.t.'} → ${m.prioriteit.replace(/[🔴🟡🟢✅]/g,'').trim()}`).join('\n');
+  const visible=getVisibleQuestions();let lastMod='';
+  const antwoorden=visible.map(q=>{
+    const ans=answers[q.id];let ansStr='—';
+    if(ans!==undefined&&ans!==null&&ans!==''){
+      if(Array.isArray(ans))ansStr=ans.map(v=>{const o=q.options?q.options.find(o=>o.value===v):null;return o?o.label:v;}).join(' | ');
+      else if(q.options){const o=q.options.find(o=>o.value===ans);ansStr=o?o.label:ans;}
+      else ansStr=ans;
+    }
+    let header='';if(q.step!==lastMod){header=`\n[ ${MODULES[q.step]||q.step} ]\n`;lastMod=q.step;}
+    return`${header}V: ${q.text}\nA: ${ansStr}`;
+  }).join('\n');
+  const params={
+    to_email:userEmail,to_name:userInfo.name,reply_to:BG_EMAIL_ADDR,bcc_email:BG_EMAIL_ADDR,
+    organisatie:userInfo.org,datum:dateStr,
+    risicoklasse:`${findings.filter(f=>f.level==='blocker').length} directe acties · ${findings.filter(f=>f.level==='warning').length} waarschuwingen`,
+    kernuitkomsten:moduleOverzicht,bevindingen:bevindingen,antwoorden:antwoorden
+  };
+  return emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PDF DOWNLOAD
+// ═══════════════════════════════════════════════════════════════
+function downloadPDF(){
+  const btn=document.getElementById('btn-download-pdf');
+  btn.textContent='Genereren…';btn.disabled=true;
+  _buildAndSavePDF();
+  btn.textContent='↓ Download PDF';btn.disabled=false;
+}
+
+function _buildAndSavePDF(){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const fileName='AI_Data_Compliance_Assessment_'+(userInfo.org||'bg_legal').replace(/[^a-zA-Z0-9]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf';
+  const pW=210,pH=297,mg=18,cW=174;let y=mg;
+  const findings=computeFindings();const modules=computeModuleSummary();const visible=getVisibleQuestions();
+  const dateStr=new Date().toLocaleDateString('nl-NL',{day:'2-digit',month:'long',year:'numeric'});
+  const C={ink:[47,48,47],muted:[122,116,104],accent:[133,133,204],paper:[237,232,220],cream:[222,218,198],red:[200,64,30],redLt:[245,232,228],amber:[201,132,30],amberLt:[245,237,224],green:[45,122,95],greenLt:[228,240,235],white:[253,250,245]};
+  const sf=(s,sz,c)=>{doc.setFont('helvetica',s);doc.setFontSize(sz);doc.setTextColor(...(c||C.ink));};
+  const chk=(n)=>{if(y+n>pH-mg){doc.addPage();y=mg;}};
+  const dr=(x,ry,w,h,fc,sc)=>{if(fc)doc.setFillColor(...fc);if(sc){doc.setDrawColor(...sc);doc.setLineWidth(0.3);}if(fc&&sc)doc.roundedRect(x,ry,w,h,1.5,1.5,'FD');else if(fc)doc.roundedRect(x,ry,w,h,1.5,1.5,'F');};
+
+  // Cover
+  dr(0,0,pW,52,C.ink);doc.setFillColor(...C.accent);doc.circle(mg+3,14,2.5,'F');
+  sf('bold',11,C.white);doc.text('AI & Data Compliance Assessment',mg+9,15);
+  sf('normal',7.5,[180,180,220]);doc.text('bg.legal · 11 Modules (0–10) · AI Assessment Cycle',mg+9,20);
+  sf('bold',17,C.white);doc.text('Compliance Assessment Rapport',mg,36);
+  sf('normal',10,[180,180,220]);doc.text('Bevindingen per module · Geprioriteerde actielijst',mg,43);
+  const bCount=findings.filter(f=>f.level==='blocker').length;
+  const bC=bCount>0?C.red:C.green;const bL=bCount>0?`${bCount} BLOCKER${bCount>1?'S':''}`:' GEEN BLOCKERS';
+  doc.setFillColor(...bC);doc.roundedRect(pW-mg-44,8,44,10,2,2,'F');sf('bold',7,C.white);doc.text(bL,pW-mg-22,14.2,{align:'center'});
+  y=58;
+
+  // Info block
+  dr(mg,y,cW,22,C.paper,C.cream);
+  sf('bold',7.5,C.muted);doc.text('NAAM',mg+5,y+7);doc.text('ORGANISATIE',mg+65,y+7);doc.text('DATUM',mg+130,y+7);
+  sf('normal',9,C.ink);doc.text(userInfo.name.substring(0,28),mg+5,y+14);doc.text(userInfo.org.substring(0,28),mg+65,y+14);doc.text(dateStr,mg+130,y+14);
+  y+=30;
+
+  const secHdr=(title)=>{chk(14);y+=6;doc.setFillColor(...C.accent);doc.rect(mg,y,3,7,'F');sf('bold',10,C.ink);doc.text(title,mg+6,y+5.5);y+=12;doc.setDrawColor(...C.cream);doc.setLineWidth(0.4);doc.line(mg,y-2,pW-mg,y-2);};
+
+  // Overall
+  secHdr('Overall Risicosignalering');
+  [['Directe actie vereist',findings.filter(f=>f.level==='blocker').length,C.red],
+   ['Actie vereist voor go-live',findings.filter(f=>f.level==='warning').length,C.amber],
+   ['Monitor en documenteer',findings.filter(f=>f.level==='monitor').length,C.green]
+  ].forEach(([label,count,color],i)=>{
+    chk(10);
+    if(i%2===0){doc.setFillColor(...C.paper);doc.rect(mg,y,cW,10,'F');}
+    // Draw colored circle instead of emoji
+    doc.setFillColor(...color);doc.circle(mg+5,y+5,2.5,'F');
+    sf('bold',8,C.ink);doc.text(label,mg+11,y+6.2);
+    sf('bold',11,color);doc.text(String(count),pW-mg-5,y+6.5,{align:'right'});
+    y+=10;
+  });y+=4;
+
+  // Module table
+  secHdr('Overzicht per Module — AI Assessment Cycle');
+  modules.forEach((m,i)=>{chk(9);if(i%2===0){doc.setFillColor(...C.paper);doc.rect(mg,y,cW,9,'F');}
+  sf('bold',7.5,C.ink);doc.text(`${m.num} - ${m.name}`,mg+3,y+6);
+  const relTxt=m.relevant==='always'?'Altijd':m.relevant==='yes'?'Relevant':'N.v.t.';
+  const relCol=m.relevant==='always'?C.accent:m.relevant==='yes'?C.green:C.muted;
+  sf('normal',7,relCol);doc.text(relTxt,mg+80,y+6);
+  const hasBlocker=m.findings.some(f=>f.level==='blocker');
+  const hasWarning=m.findings.some(f=>f.level==='warning');
+  const priColor=hasBlocker?C.red:hasWarning?C.amber:C.green;
+  const priTxt=hasBlocker?'Nu actie':hasWarning?'Voor go-live':m.relevant==='no'?'N.v.t.':'OK';
+  doc.setFillColor(...priColor);doc.circle(pW-mg-22,y+4.5,2,'F');
+  sf('bold',7.5,priColor);doc.text(priTxt,pW-mg-5,y+6,{align:'right'});y+=9;});y+=4;
+
+  // Findings
+  secHdr('Bevindingen & Aandachtspunten');
+  const lcs={blocker:{bg:C.redLt,border:C.red,text:C.red,label:'DIRECTE ACTIE'},warning:{bg:C.amberLt,border:C.amber,text:C.amber,label:'ACTIE VEREIST'},monitor:{bg:C.greenLt,border:C.green,text:C.green,label:'MONITOR'}};
+  findings.forEach((f,idx)=>{
+    const lc=lcs[f.level]||lcs.monitor;
+    sf('bold',9,C.ink);const nL=doc.splitTextToSize(f.name,cW-22);
+    sf('normal',7,C.muted);const dL=doc.splitTextToSize(f.desc,cW-22);const mL=doc.splitTextToSize(f.meta,cW-22);
+    const cH=8+nL.length*5+dL.length*4+mL.length*3.5+6;chk(cH+4);dr(mg,y,cW,cH,lc.bg,lc.border);
+    doc.setFillColor(...lc.text);doc.circle(mg+6,y+5.5,2.5,'F');doc.roundedRect(mg+10,y+3,28,5,1,1,'F');sf('bold',5.5,C.white);doc.text(lc.label,mg+24,y+6.5,{align:'center'});
+    sf('bold',6.5,C.muted);doc.text(`[${f.module}] #${idx+1}`,pW-mg-5,y+7,{align:'right'});
+    let cY=y+11;sf('bold',8,C.ink);nL.forEach(l=>{doc.text(l,mg+5,cY);cY+=5;});cY+=1;
+    sf('normal',7,C.muted);dL.forEach(l=>{doc.text(l,mg+5,cY);cY+=4.2;});cY+=2;
+    sf('italic',6.5,C.accent);mL.forEach(l=>{doc.text(l,mg+5,cY);cY+=3.5;});
+    y+=cH+4;
+  });
+
+  // Answers
+  secHdr('Antwoorden per Module');
+  let lastMod2='';
+  visible.forEach(q=>{
+    if(q.step!==lastMod2){chk(12);y+=3;doc.setFillColor(220,220,240);doc.rect(mg,y,cW,8,'F');sf('bold',7,C.accent);doc.text((MODULES[q.step]||q.step).toUpperCase(),mg+3,y+5.5);y+=10;lastMod2=q.step;}
+    const ans=answers[q.id];let aStr='—';
+    if(ans!==undefined&&ans!==null&&ans!==''){if(Array.isArray(ans)){aStr=ans.map(v=>{const o=q.options?q.options.find(o=>o.value===v):null;return o?o.label:v;}).join(' | ');}else if(q.options){const o=q.options.find(o=>o.value===ans);aStr=o?o.label:ans;}else aStr=ans;}
+    sf('normal',7,C.ink);const qL=doc.splitTextToSize(q.text,cW-55);
+    sf('bold',7,C.ink);const aL=doc.splitTextToSize(aStr,52);
+    const rH=Math.max(qL.length*4,aL.length*4)+5;chk(rH);
+    sf('normal',7,C.muted);qL.forEach((l,i)=>doc.text(l,mg+2,y+4+i*4));sf('bold',7,C.ink);aL.forEach((l,i)=>doc.text(l,pW-mg-2,y+4+i*4,{align:'right'}));
+    doc.setDrawColor(...C.paper);doc.setLineWidth(0.25);doc.line(mg,y+rH-1,pW-mg,y+rH-1);y+=rH;
+  });
+
+  // Disclaimer
+  chk(28);y+=6;dr(mg,y,cW,20,C.paper,C.cream);sf('bold',7,C.muted);doc.text('DISCLAIMER',mg+4,y+6);
+  sf('normal',6.5,C.muted);doc.splitTextToSize('Dit assessment biedt een compliance-overzicht op basis van de verstrekte antwoorden en vormt geen juridisch advies. Regelgevingsverplichtingen hangen af van uw specifieke context, jurisdictie en systeemontwerp. Raadpleeg voor specifiek juridisch advies een gekwalificeerde jurist gespecialiseerd in EU digitale regelgeving.',cW-8).forEach((l,i)=>doc.text(l,mg+4,y+11+i*3.8));
+
+  // Footers
+  const tp=doc.internal.getNumberOfPages();
+  for(let p=1;p<=tp;p++){doc.setPage(p);doc.setFillColor(...C.ink);doc.rect(0,pH-10,pW,10,'F');sf('normal',6.5,[180,180,220]);doc.text('bg.legal | info@bg.legal | AI & Data Compliance Assessment',mg,pH-4);doc.text(`Pagina ${p} / ${tp}`,pW-mg,pH-4,{align:'right'});}
+
+  doc.save(fileName);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESTART
+// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// SAVE / RESUME — LOCALSTORAGE
+// ═══════════════════════════════════════════════════════════════
+
+const STORAGE_KEY='bglegal_ai_data_compliance_assessment_v1';
+const STORAGE_VERSION=1;
+let saveTimer=null;
+let lastSavedAt=null;
+
+function getSavePayload(){
+  return {
+    version: STORAGE_VERSION,
+    savedAt: new Date().toISOString(),
+    currentQ,
+    answers,
+    history,
+    userInfo
+  };
+}
+
+function saveProgress(immediate=false){
+  if(saveTimer) clearTimeout(saveTimer);
+
+  const doSave=()=>{
+    try{
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(getSavePayload()));
+      lastSavedAt=new Date();
+      updateSaveStatus();
+      updateResumePanel();
+    }catch(e){
+      console.warn('Opslaan van assessment-voortgang is mislukt:',e);
+      const st=document.getElementById('save-status-text');
+      if(st) st.textContent='Voortgang kon niet lokaal worden opgeslagen';
+    }
+  };
+
+  if(immediate) doSave();
+  else saveTimer=setTimeout(doSave,250);
+}
+
+function loadSavedProgress(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const data=JSON.parse(raw);
+    if(!data||data.version!==STORAGE_VERSION||!data.answers) return null;
+    return data;
+  }catch(e){
+    console.warn('Laden van opgeslagen assessment is mislukt:',e);
+    return null;
+  }
+}
+
+function formatSavedDate(iso){
+  if(!iso) return 'onbekende datum';
+  try{
+    return new Date(iso).toLocaleString('nl-NL',{
+      day:'2-digit',
+      month:'long',
+      year:'numeric',
+      hour:'2-digit',
+      minute:'2-digit'
+    });
+  }catch(e){
+    return 'onbekende datum';
+  }
+}
+
+function updateResumePanel(){
+  const panel=document.getElementById('resume-panel');
+  const sub=document.getElementById('resume-sub');
+  if(!panel) return;
+
+  const data=loadSavedProgress();
+  if(data&&data.answers&&Object.keys(data.answers).length>0){
+    panel.classList.add('visible');
+    const answeredCount=Object.keys(data.answers).length;
+    if(sub){
+      sub.textContent=`Er is voortgang opgeslagen op ${formatSavedDate(data.savedAt)}. Aantal beantwoorde vragen: ${answeredCount}. De gegevens staan alleen lokaal in deze browser.`;
+    }
+  }else{
+    panel.classList.remove('visible');
+  }
+}
+
+function updateSaveStatus(){
+  const st=document.getElementById('save-status-text');
+  if(!st) return;
+  if(lastSavedAt){
+    st.textContent='Voortgang lokaal opgeslagen om '+lastSavedAt.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  }else{
+    st.textContent='Voortgang wordt lokaal opgeslagen';
+  }
+}
+
+function resumeAssessment(){
+  const data=loadSavedProgress();
+  if(!data){
+    updateResumePanel();
+    return;
+  }
+
+  answers=data.answers||{};
+  history=Array.isArray(data.history)?data.history:[];
+  userInfo=data.userInfo||{name:'',org:'',email:''};
+
+  const vis=getVisibleQuestions();
+  currentQ=Number.isInteger(data.currentQ)?data.currentQ:0;
+  if(currentQ<0) currentQ=0;
+  if(currentQ>=vis.length) currentQ=Math.max(0,vis.length-1);
+
+  showScreen('screen-question');
+  renderQuestion();
+  saveProgress(true);
+}
+
+function deleteSavedProgress(){
+  try{
+    localStorage.removeItem(STORAGE_KEY);
+  }catch(e){
+    console.warn('Verwijderen van opgeslagen assessment is mislukt:',e);
+  }
+  updateResumePanel();
+}
+
+function clearSavedProgress(){
+  try{
+    localStorage.removeItem(STORAGE_KEY);
+  }catch(e){
+    console.warn('Wissen van opgeslagen assessment is mislukt:',e);
+  }
+}
+
+// Bestaande functies uitbreiden zonder je hoofdcode opnieuw te hoeven herschrijven
+const originalStartScan=startScan;
+startScan=function(){
+  currentQ=0;
+  answers={};
+  history=[];
+  userInfo={name:'',org:'',email:''};
+  clearSavedProgress();
+  showScreen('screen-question');
+  renderQuestion();
+  saveProgress(true);
+};
+
+const originalRenderQuestion=renderQuestion;
+renderQuestion=function(){
+  originalRenderQuestion();
+
+  const q=getVisibleQuestions()[currentQ];
+  if(!q) return;
+
+  const questionScreen=document.getElementById('screen-question');
+  const stepEl=document.getElementById('q-step');
+
+  if(questionScreen&&stepEl&&!document.getElementById('save-status')){
+    const status=document.createElement('div');
+    status.className='save-status';
+    status.id='save-status';
+    status.innerHTML='<span class="save-status-dot"></span><span id="save-status-text">Voortgang wordt lokaal opgeslagen</span>';
+    stepEl.parentNode.insertBefore(status,stepEl);
+  }
+
+  if(q.type==='free'){
+    const freeInput=document.getElementById('free-text-input');
+    if(freeInput){
+      freeInput.oninput=function(){
+        answers[q.id]=(freeInput.value||'').trim();
+        updateNextBtn();
+        saveProgress();
+      };
+    }
+  }
+
+  updateSaveStatus();
+  saveProgress();
+};
+
+const originalSelectOption=selectOption;
+selectOption=function(value,isMulti,q){
+  originalSelectOption(value,isMulti,q);
+  saveProgress();
+};
+
+const originalNextQuestion=nextQuestion;
+nextQuestion=function(){
+  saveProgress(true);
+  originalNextQuestion();
+  saveProgress(true);
+};
+
+const originalPrevQuestion=prevQuestion;
+prevQuestion=function(){
+  originalPrevQuestion();
+  saveProgress(true);
+};
+
+const originalShowEmailGate=showEmailGate;
+showEmailGate=function(){
+  saveProgress(true);
+  originalShowEmailGate();
+
+  const nameEl=document.getElementById('user-name');
+  const orgEl=document.getElementById('user-org');
+  const emailEl=document.getElementById('user-email');
+
+  if(nameEl&&userInfo.name&&userInfo.name!=='Niet opgegeven') nameEl.value=userInfo.name;
+  if(orgEl&&userInfo.org&&userInfo.org!=='Niet opgegeven') orgEl.value=userInfo.org;
+  if(emailEl&&userInfo.email) emailEl.value=userInfo.email;
+};
+
+const originalSubmitEmail=submitEmail;
+submitEmail=function(){
+  const emailInput=document.getElementById('user-email');
+  const email=emailInput.value.trim();
+
+  if(isValidEmail(email)){
+    userInfo.name=document.getElementById('user-name').value.trim()||'Niet opgegeven';
+    userInfo.org=document.getElementById('user-org').value.trim()||'Niet opgegeven';
+    userInfo.email=email;
+    saveProgress(true);
+  }
+
+  originalSubmitEmail();
+};
+
+const originalShowResults=showResults;
+showResults=function(){
+  saveProgress(true);
+  originalShowResults();
+  saveProgress(true);
+};
+
+// ═══════════════════════════════════════════════════════════════
+// RESTART
+// ═══════════════════════════════════════════════════════════════
+function restart(){
+  clearSavedProgress();
+  currentQ=0;
+  answers={};
+  history=[];
+  userInfo={name:'',org:'',email:''};
+
+  ['user-name','user-org','user-email'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+
+  clearEmailError();
+
+  const btn=document.getElementById('btn-submit-email');
+  if(btn){
+    btn.disabled=false;
+    btn.textContent='Bekijk mijn compliance-rapport →';
+  }
+
+  updateResumePanel();
+  showScreen('screen-intro');
+}
+
+window.addEventListener('beforeunload',()=>saveProgress(true));
+document.addEventListener('DOMContentLoaded',()=>updateResumePanel());
+updateResumePanel();
+</script>
+</body>
+</html>
